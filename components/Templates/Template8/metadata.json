@@ -1,0 +1,19 @@
+{
+    "id":"8",
+    "name":"Template 8",
+    "thumbnail":"https://pub-8915c2ad1d8147cc9ae47d1905b82505.r2.dev/Templates/Template8/preview.jpg",
+    "description":"This is a template for a simple resume.",
+    "category":["All","Professional","Simple"],
+    "metaData":{
+     "id":"8",
+     "PersonalInformation":true,
+     "Education":true,
+     "Skills":true,
+     "Experience":true,
+     "Projects":false,
+     "Certifications":false,
+     "Awards":false,
+     "Languages":true,
+     "Hobbies":false
+    }
+ }

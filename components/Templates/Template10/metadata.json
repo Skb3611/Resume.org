@@ -1,0 +1,19 @@
+{
+    "id":"10",
+    "name":"Template 10",
+    "thumbnail":"https://pub-8915c2ad1d8147cc9ae47d1905b82505.r2.dev/Templates/Template10/preview.jpg",
+    "description":"This is a template for a simple resume.",
+    "category":["All","Professional","Simple","Tech"],
+    "metaData":{
+     "id":"10",
+     "PersonalInformation":true,
+     "Education":true,
+     "Skills":true,
+     "Experience":true,
+     "Projects":false,
+     "Certifications":false,
+     "Awards":false,
+     "Languages":false,
+     "Hobbies":false
+    }
+ }

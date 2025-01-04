@@ -8,6 +8,7 @@ let prisma = new PrismaClient();
   console.log(__dirname);
 
   // Read all directories in the current folder
+  // @ts-ignore
   let folders = FS.readdirSync(__dirname).filter((file) =>
     FS.statSync(PATH.join(__dirname, file)).isDirectory()
   );

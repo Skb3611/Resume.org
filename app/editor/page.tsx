@@ -80,26 +80,33 @@ export default function ResumeBuilder() {
   const router = useRouter();
 
   const handleDownloadPDF = async () => {
-    if (!printRef.current) return;
-  
     try {
-      const canvas = await html2canvas(printRef.current, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
+      if (printRef.current) {
+        const canvas = await html2canvas(printRef.current, { scale: 2, useCORS: true });
+        const imgData = canvas.toDataURL("image/png");
   
-      const pdf = new jsPDF("portrait", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        // Default PDF page width in mm
+        const pdfWidth = 210; // A4 width in mm
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width; // Scale height proportionally to the width
   
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        // Create jsPDF instance with default width and dynamic height
+        const pdf = new jsPDF({
+          orientation: pdfHeight > pdfWidth ? "portrait" : "landscape",
+          unit: "mm",
+          format: [pdfWidth, pdfHeight], // Fixed width, dynamic height
+        });
   
-      // Generate a unique file name using timestamp
-      const uniqueName = `resume_${new Date().getTime()}.pdf`;
-      pdf.save(uniqueName);
+        // Add the image to the PDF
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+  
+        // Generate a unique file name using timestamp
+        const uniqueName = `resume_${new Date().getTime()}.pdf`;
+        pdf.save(uniqueName);
+      }
     } catch (error) {
       console.error("Error during PDF download:", error);
     }
   };
-  
   
   
   

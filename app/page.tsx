@@ -9,9 +9,14 @@ import {
 import { Layout, Zap, Award, Download, Edit, Share2 } from "lucide-react";
 import Image from "next/image";
 import { getTemplates } from "@/lib/serveractions";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import Script from "next/script";
+// @ts-ignore
+import WAVES from "vanta/dist/vanta.waves.min";
 import { useRouter } from "next/navigation";
+import * as THREE from "three";
+import { teardownHeapProfiler } from "next/dist/build/swc";
 interface TemplateImagesData {
   id: number;
   name: string;
@@ -25,6 +30,38 @@ export default function Page() {
     []
   );
   const [IsLoading, setIsLoading] = useState(true);
+  
+  const componentRef = useRef<HTMLElement[] | null[]>([]);
+  useEffect(() => {
+  
+    console.log(componentRef.current);
+    // Apply the Vanta Waves effect to each div in the ref array
+    componentRef.current.forEach((div) => {
+      if (div) {
+        WAVES({
+          el: div, // Apply Vanta Waves effect to each div
+          THREE,
+          color: "#e11d48", // Customize wave color
+          shininess: 50, // Customize shininess
+          waveHeight: 20, // Height of the waves
+          waveSpeed: 1.5, // Speed of wave animation
+          zoom: 1, // Zoom level
+          backgroundColor: 0x000000,
+        });
+      }
+    });
+
+    // Cleanup effect when component unmounts
+    return () => {
+      componentRef.current.forEach((div) => {
+        if (div) {
+          // Make sure to remove the effect when the component unmounts
+          WAVES({ el: div }).destroy();
+        }
+      });
+    };
+  }, []);
+
   useEffect(() => {
     (async () => {
       let images = await getTemplates();
@@ -37,20 +74,23 @@ export default function Page() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800">
+        <section
+          ref={(el)=> {componentRef.current[0] = el} }
+          className="h-[91vh] w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800"
+        >
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
                   Create Your Perfect Resume in Minutes
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                <p className="mx-auto max-w-[700px] text-white md:text-xl ">
                   Build a professional resume that stands out with our
                   easy-to-use builder and variety of expert-designed templates.
                 </p>
               </div>
               <div className="space-x-4">
-                <Button onClick={() => Router.push("/templates")} size="lg">
+                <Button onClick={() => Router.push("/templates")} size="lg" variant={"outline"}>
                   Get Started for Free
                 </Button>
                 <Button
@@ -133,7 +173,7 @@ export default function Page() {
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
               Our Templates
             </h2>
-            <div className="grid gap-y-6 gap-x-0 sm:grid-cols-2 lg:grid-cols-3 place-items-center w-[80%] mx-auto ">
+            <div  className="grid gap-y-6 gap-x-0 sm:grid-cols-2 lg:grid-cols-3 place-items-center w-[80%] mx-auto ">
               {!IsLoading
                 ? TemplateImages.slice(0, 6)?.map((item) => (
                     <div
@@ -237,7 +277,7 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground">
+        <section ref={(el)=> {componentRef.current[2] = el} } className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">

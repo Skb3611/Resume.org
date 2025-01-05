@@ -1,7 +1,8 @@
 import { Phone, Mail, MapPin } from "lucide-react"
 import type { PersonalData, EducationData, SkillsData, ExperienceData,LanguagesData,ReferencesData } from "@/app/editor/page"
+import { forwardRef } from "react"
 
-export default function Template({
+const Template=forwardRef(({
   PersonalInformationData ,
   EducationData,
   SkillsData,
@@ -15,9 +16,9 @@ export default function Template({
   ExperienceData: ExperienceData[],
   LanguagesData: LanguagesData[],
   ReferencesData: ReferencesData
-}) {
+},ref:React.Ref<HTMLDivElement>) => {
   return (
-    <div className="w-[85%] mx-auto bg-white text-black shadow-lg">
+    <div ref={ref} className="w-[85%] mx-auto bg-white text-black shadow-lg">
       {/* Header */}
       <div className="bg-zinc-800 text-white  p-8 flex justify-between items-start">
         <div>
@@ -63,7 +64,7 @@ export default function Template({
             {ExperienceData &&ExperienceData[0].company
               ? ExperienceData.map((item, index) => (
                   <div key={index}>
-                    <div className="flex justify-between items-baseline mb-1">
+                    <div className="flex justify-between items-baseline">
                       <h3 className="text-lg font-bold">{item.company || "Company Name"}</h3>
                       <p className="text-zinc-600">
                         {item.startdate
@@ -72,7 +73,7 @@ export default function Template({
                         - {item.enddate ? new Date(item.enddate).getFullYear() : "2020"}
                       </p>
                     </div>
-                    <p className="text-zinc-600 italic mb-2">{item.position || "Job Position"}</p>
+                    <p className="text-zinc-600 italic mb-1">{item.position || "Job Position"}</p>
                     <p className="text-zinc-600 text-sm">{item.summary || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris"}</p>
                   </div>
                 ))
@@ -80,11 +81,11 @@ export default function Template({
                   .fill(0)
                   .map((_, index) => (
                     <div key={index}>
-                      <div className="flex justify-between items-baseline mb-1">
+                      <div className="flex justify-between items-baseline">
                         <h3 className="text-lg font-bold">Company Name {2017 + index} - {2020 + index}</h3>
                         <p className="text-zinc-600">{2017 + index} - {2020 + index}</p>
                       </div>
-                      <p className="text-zinc-600 italic mb-2">Job Position</p>
+                      <p className="text-zinc-600 italic mb-1">Job Position</p>
                       <p className="text-zinc-600 text-sm">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
                         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
@@ -113,7 +114,7 @@ export default function Template({
                     <p className="text-sm text-zinc-600 ">{item.location || "Location"}</p>
                   </div>
                 ))
-              : Array(3)
+              : Array(2)
                   .fill(0)
                   .map((_, index) => (
                     <div key={index}>
@@ -196,4 +197,5 @@ export default function Template({
       </div>
     </div>
   )
-}
+})
+export default Template

@@ -1,6 +1,7 @@
 import type { PersonalData, EducationData, SkillsData, ExperienceData } from "@/app/editor/page"
+import { forwardRef } from "react"
 
-export default function Template({
+const Template=forwardRef(({
   PersonalInformationData ,
   EducationData ,
   SkillsData ,
@@ -10,9 +11,9 @@ export default function Template({
   EducationData: EducationData[]
   SkillsData: SkillsData[]
   ExperienceData: ExperienceData[]
-}) {
+},ref:React.Ref<HTMLDivElement>) => {
   return (
-    <div className="w-full mx-auto bg-white shadow-lg p-8">
+    <div ref={ref} className="w-full mx-auto bg-white shadow-lg p-8">
       {/* Header */}
       <header className="mb-6">
         <h1 className="text-4xl font-bold text-blue-800 mb-2">{PersonalInformationData?.name || "OLIVIA WILSON"}</h1>
@@ -142,4 +143,5 @@ export default function Template({
       </section>
     </div>
   )
-}
+})
+export default Template

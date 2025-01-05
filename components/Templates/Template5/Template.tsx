@@ -1,12 +1,14 @@
 import { Phone, Mail, Globe, MapPin } from "lucide-react";
+
 import type {
   PersonalData,
   EducationData,
   SkillsData,
   ExperienceData,
 } from "@/app/editor/page";
+import { forwardRef } from "react";
 
-export default function Template4({
+const Template=forwardRef(({
   PersonalInformationData,
   EducationData,
   SkillsData,
@@ -16,10 +18,10 @@ export default function Template4({
   EducationData: EducationData[];
   SkillsData: SkillsData[];
   ExperienceData: ExperienceData[];
-}) {
+},ref:React.Ref<HTMLDivElement>) => {
   console.log(PersonalInformationData);
   return (
-    <div className="w-[90%] mx-auto bg-white shadow-lg p-8">
+    <div ref={ref} className="w-[90%] mx-auto bg-white shadow-lg p-8">
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-2xl  font-semibold tracking-[0.3em] text-zinc-800 mb-1.5">
@@ -271,4 +273,5 @@ export default function Template4({
       </div>
     </div>
   );
-}
+})
+export default Template;

@@ -1,4 +1,5 @@
 import { ArrowRight, Globe, Mail, MapPin, Phone } from "lucide-react";
+import { forwardRef } from "react";
 import {
   EducationData,
   SkillsData,
@@ -7,7 +8,7 @@ import {
   AwardsData,
   PersonalData,
 } from "@/app/editor/page";
-export default function Component({
+const Template=forwardRef(({
   PersonalInformationData,
   EducationData,
   SkillsData,
@@ -21,9 +22,9 @@ export default function Component({
   ExperienceData: ExperienceData[];
   CertificationsData: CertificationData[];
   AwardsData: AwardsData[];
-}) {
+},ref:React.Ref<HTMLDivElement>) => {
   return (
-    <div className="w-[90%] mx-auto bg-white text-black p-8 shadow-lg">
+    <div ref={ref} className="w-[90%] mx-auto bg-white text-black p-8 shadow-lg">
       <header className="grid   grid-cols-[2fr_1fr] mb-4">
       <section>
             <div className="flex justify-between items-start">
@@ -242,4 +243,5 @@ export default function Component({
       </div>
     </div>
   );
-}
+})
+export default Template

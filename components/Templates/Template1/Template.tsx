@@ -1,11 +1,13 @@
+import React,{forwardRef} from "react";
 import {
   PersonalData,
   EducationData,
   SkillsData,
   ExperienceData,
   LanguagesData,
+  
 } from "@/app/editor/page";
-export default function Template1({
+const Template=forwardRef(({
   PersonalInformationData,
   EducationData,
   SkillsData,
@@ -17,9 +19,11 @@ export default function Template1({
   SkillsData: SkillsData[];
   ExperienceData: ExperienceData[];
   LanguagesData: LanguagesData[];
-}) {
+  
+},ref:React.Ref<HTMLDivElement>) => {
+  console.log(ref)
   return (
-    <div className="flex mx-auto bg-white shadow-lg w-[85%]">
+    <div ref={ref}  className="flex mx-auto bg-white shadow-lg w-[85%]">
       <div className="bg-slate-700 w-1/3 text-white p-4">
         <h1 className="text-lg font-bold mb-1">
           {PersonalInformationData?.name || "Random name"}
@@ -160,4 +164,5 @@ export default function Template1({
       </div>
     </div>
   );
-}
+})
+ export default Template;

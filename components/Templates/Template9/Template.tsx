@@ -7,8 +7,9 @@ import type {
   CertificationData,
   AwardsData,
 } from "@/app/editor/page";
+import { forwardRef } from "react";
 
-export default function JacquelineThompsonTemplate({
+const Template=forwardRef(({
   PersonalInformationData,
   EducationData,
   SkillsData,
@@ -24,9 +25,9 @@ export default function JacquelineThompsonTemplate({
   LanguagesData: LanguagesData[];
   CertificationsData: CertificationData[];
   AwardsData: AwardsData[];
-}) {
+},ref:React.Ref<HTMLDivElement>) => {
   return (
-    <div className=" w-[85%] mx-auto bg-white shadow-lg p-8 text-black">
+    <div ref={ref} className=" w-[85%] mx-auto bg-white shadow-lg p-8 text-black">
       {/* Header */}
       <header className="text-center mb-6">
         <h1 className="text-2xl font-bold text-purple-700 mb-2">
@@ -253,4 +254,5 @@ export default function JacquelineThompsonTemplate({
       </section>
     </div>
   );
-}
+})
+export default Template

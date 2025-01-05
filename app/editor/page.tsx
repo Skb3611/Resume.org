@@ -6,7 +6,7 @@ import Common_single_input from "@/components/TemplateComponents/Common_single_i
 import Experience from "@/components/TemplateComponents/Experience";
 import CommonComp from "@/components/TemplateComponents/CommonComp";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getTemplateData } from "@/lib/serveractions";
 import { ArrowRight, ArrowLeft, Save } from "lucide-react";
@@ -17,6 +17,8 @@ import { String } from "aws-sdk/clients/codepipeline";
 import Projects from "@/components/TemplateComponents/Projects";
 import References from "@/components/TemplateComponents/References";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 export interface PersonalData {
   name: string;
   role: string;
@@ -71,11 +73,39 @@ export interface ReferencesData {
 }
 
 export default function ResumeBuilder() {
-  const [Template, setTemplate] = useState<React.FC | null>(null);
+  const printRef = useRef<HTMLDivElement>(null);
+  const [Template, setTemplate] = useState<React.FC<any> | null>(null);
   const [isLoading, setisLoading] = useState(true);
   const params = useSearchParams();
   const router = useRouter();
 
+  const handleDownloadPDF = async () => {
+    if (!printRef.current) return;
+  
+    try {
+      const canvas = await html2canvas(printRef.current, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+  
+      const pdf = new jsPDF("portrait", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+  
+      // Generate a unique file name using timestamp
+      const uniqueName = `resume_${new Date().getTime()}.pdf`;
+      pdf.save(uniqueName);
+    } catch (error) {
+      console.error("Error during PDF download:", error);
+    }
+  };
+  
+  
+  
+  
+  
+  
+  
   const func = async () => {
     let id = params.get("template");
     if (!id) router.push("/templates");
@@ -90,7 +120,7 @@ export default function ResumeBuilder() {
         for (const key in templateData) {
           templateData[key] == true ? arr.push(key) : null;
         }
-        console.log(templateData,arr);
+        console.log(templateData, arr);
         setTabs([...arr]);
       }
     } catch (error) {
@@ -322,100 +352,106 @@ export default function ResumeBuilder() {
 
   return (
     !isLoading && (
-        <div className="container mx-auto p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4 ">
-              <div className="min-h-[87vh] ">
-                <Card className="p-6 min-h-[87vh] flex flex-col justify-between">
-                  <Tabs value={activeTab} onValueChange={handleTabChange}>
-                    <ScrollArea className="flex w-full h-full ">
-                      <TabsList className="flex flex-nowrap w-full h-12 overflow-hidden py-2 justify-around">
-                        {tabs.map((item) => {
-                          return (
-                            <TabsTrigger
-                              key={item}
-                              value={item}
-                              className="py-1.5 px-4"
-                            >
-                              {item}
-                            </TabsTrigger>
-                          );
-                        })}
-                      </TabsList>
-                      <ScrollBar orientation="horizontal" className="h-[5px]" />
-                    </ScrollArea>
-                    {renderComponent()}
-                  </Tabs>
-                  <div className="flex justify-between mt-3">
-                    <Button
-                      onClick={handlePrev}
-                      className="w-1/5"
-                      disabled={tabs.indexOf(activeTab) === 0}
-                    >
-                      <ArrowLeft className="mr-2" /> Previous
-                    </Button>
-                    <Button className="w-1/3 flex" onClick={handlesave}>
+      <div className="container mx-auto p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4 ">
+            <div className="min-h-[87vh] ">
+              <Card className="p-6 min-h-[87vh] flex flex-col justify-between">
+                <Tabs value={activeTab} onValueChange={handleTabChange}>
+                  <ScrollArea className="flex w-full h-full ">
+                    <TabsList className="flex flex-nowrap w-full h-12 overflow-hidden py-2 justify-around">
+                      {tabs.map((item) => {
+                        return (
+                          <TabsTrigger
+                            key={item}
+                            value={item}
+                            className="py-1.5 px-4"
+                          >
+                            {item}
+                          </TabsTrigger>
+                        );
+                      })}
+                    </TabsList>
+                    <ScrollBar orientation="horizontal" className="h-[5px]" />
+                  </ScrollArea>
+                  {renderComponent()}
+                </Tabs>
+                <div className="flex justify-between mt-3">
+                  <Button
+                    onClick={handlePrev}
+                    className="w-1/5 "
+                    disabled={tabs.indexOf(activeTab) === 0}
+                  >
+                    <ArrowLeft className="mr-2" /> Previous
+                  </Button>
+                  
+                    <Button className="w-1/4 flex" onClick={handlesave}>
                       <Save className="mr-1 mb-1 w-6" />
                       Save Resume
                     </Button>
-                    <Button
-                      onClick={handleNext}
-                      disabled={tabs.indexOf(activeTab) === tabs.length - 1}
-                      className="w-1/5"
-                    >
-                      Next <ArrowRight className="ml-2" />
+                    <Button className="w-1/4 flex" onClick={handleDownloadPDF}>
+                      <Save className="mr-1 mb-1 w-6" />
+                      Download PDF
                     </Button>
-                  </div>
-                </Card>
-              </div>
-            </div>
-
-            <div className="bg-secondary dark:bg-card w-full p-4 rounded-lg shadow-lg  ">
-              {Template &&
-                (() => {
-                  const templateProps = {
-                    PersonalInformationData: {
-                      name: personaldata.name,
-                      role: personaldata.role,
-                      aboutme: personaldata.aboutme,
-                      phone: personaldata.phone,
-                      email: personaldata.email,
-                      address: personaldata.address,
-                    },
-                    EducationData: educationdata,
-                    SkillsData: SkillsData,
-                    ExperienceData: experiencedata,
-                    LanguagesData: languagesdata,
-                    ProjectsData: projects,
-                    HobbiesData: hobbies,
-                    ReferencesData: references,
-                    CertificationsData: certifications,
-                    AwardsData: awards,
-                  };
-
-                  const filteredProps: Record<string, any> = Object.keys(
-                    templateProps
-                  ).reduce(
-                    (acc, key) => {
-                      // Remove 'Data' suffix from the key and compare it with the tabs
-                      const tabKey = key.replace("Data", ""); // This gives you 'PersonalInformation', 'Education', etc.
-
-                      // console.log(tabs, tabKey);
-                      if (tabs.includes(tabKey)) {
-                        // @ts-ignore
-                        acc[key] = templateProps[key];
-                      }
-                      return acc;
-                    },
-                    {} as Record<string, any> // Ensures that the accumulator is typed correctly
-                  );
-
-                  console.log(filteredProps);
-                  return <Template {...filteredProps} />;
-                })()}
+                  
+                  <Button
+                    onClick={handleNext}
+                    disabled={tabs.indexOf(activeTab) === tabs.length - 1}
+                    className="w-1/5"
+                  >
+                    Next <ArrowRight className="ml-2" />
+                  </Button>
+                </div>
+              </Card>
             </div>
           </div>
+
+          <div className="bg-secondary dark:bg-card w-full p-4 rounded-lg shadow-lg  ">
+            {Template &&
+              (() => {
+                const templateProps = {
+                  PersonalInformationData: {
+                    name: personaldata.name,
+                    role: personaldata.role,
+                    aboutme: personaldata.aboutme,
+                    phone: personaldata.phone,
+                    email: personaldata.email,
+                    address: personaldata.address,
+                  },
+                  EducationData: educationdata,
+                  SkillsData: SkillsData,
+                  ExperienceData: experiencedata,
+                  LanguagesData: languagesdata,
+                  ProjectsData: projects,
+                  HobbiesData: hobbies,
+                  ReferencesData: references,
+                  CertificationsData: certifications,
+                  AwardsData: awards,
+                };
+
+                const filteredProps: Record<string, any> = Object.keys(
+                  templateProps
+                ).reduce(
+                  (acc, key) => {
+                    // Remove 'Data' suffix from the key and compare it with the tabs
+                    const tabKey = key.replace("Data", ""); // This gives you 'PersonalInformation', 'Education', etc.
+
+                    // console.log(tabs, tabKey);
+                    if (tabs.includes(tabKey)) {
+                      // @ts-ignore
+                      acc[key] = templateProps[key];
+                    }
+                    return acc;
+                  },
+                  {} as Record<string, any> // Ensures that the accumulator is typed correctly
+                );
+
+                console.log(filteredProps);
+                return <Template ref={printRef} {...filteredProps} />;
+              })()}
+          </div>
         </div>
+      </div>
     )
   );
 }

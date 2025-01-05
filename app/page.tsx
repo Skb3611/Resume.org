@@ -11,12 +11,12 @@ import Image from "next/image";
 import { getTemplates } from "@/lib/serveractions";
 import { useEffect, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import Script from "next/script";
+import { motion } from "motion/react";
 // @ts-ignore
 import WAVES from "vanta/dist/vanta.waves.min";
 import { useRouter } from "next/navigation";
 import * as THREE from "three";
-import { teardownHeapProfiler } from "next/dist/build/swc";
+import type { Variants } from "motion/react";
 interface TemplateImagesData {
   id: number;
   name: string;
@@ -25,15 +25,52 @@ interface TemplateImagesData {
   category: string[];
 }
 export default function Page() {
+  const features = [
+    {
+      icon: Layout,
+      title: "Variety of Templates",
+      description:
+        "Choose from a wide range of professionally designed templates to suit your style and industry.",
+    },
+    {
+      icon: Zap,
+      title: "Easy to Use",
+      description:
+        "Our intuitive builder makes creating a standout resume quick and effortless.",
+    },
+    {
+      icon: Award,
+      title: "ATS-Friendly",
+      description:
+        "Ensure your resume passes Applicant Tracking Systems with our optimized formats.",
+    },
+    {
+      icon: Download,
+      title: "Multiple Download Formats",
+      description:
+        "Download your resume in PDF, Word, or plain text formats to suit any application requirement.",
+    },
+    {
+      icon: Edit,
+      title: "Real-time Editing",
+      description:
+        "See changes to your resume in real-time as you edit, ensuring perfect formatting every time.",
+    },
+    {
+      icon: Share2,
+      title: "Easy Sharing",
+      description:
+        "Share your resume directly with employers or on social media platforms with a single click.",
+    },
+  ];
   const Router = useRouter();
   const [TemplateImages, setTemplateImages] = useState<TemplateImagesData[]>(
     []
   );
   const [IsLoading, setIsLoading] = useState(true);
-  
+
   const componentRef = useRef<HTMLElement[] | null[]>([]);
   useEffect(() => {
-  
     console.log(componentRef.current);
     // Apply the Vanta Waves effect to each div in the ref array
     componentRef.current.forEach((div) => {
@@ -43,7 +80,7 @@ export default function Page() {
           THREE,
           color: "#e11d48", // Customize wave color
           shininess: 50, // Customize shininess
-          waveHeight: 20, // Height of the waves
+          waveHeight: 25, // Height of the waves
           waveSpeed: 1.5, // Speed of wave animation
           zoom: 1, // Zoom level
           backgroundColor: 0x000000,
@@ -75,22 +112,43 @@ export default function Page() {
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
         <section
-          ref={(el)=> {componentRef.current[0] = el} }
+          ref={(el) => {
+            componentRef.current[0] = el;
+          }}
           className="h-[91vh] w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800"
         >
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+              <div>
+                <motion.h1
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none mb-5"
+                >
                   Create Your Perfect Resume in Minutes
-                </h1>
-                <p className="mx-auto max-w-[700px] text-white md:text-xl ">
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                  className="mx-auto max-w-[700px] text-white md:text-xl "
+                >
                   Build a professional resume that stands out with our
                   easy-to-use builder and variety of expert-designed templates.
-                </p>
+                </motion.p>
               </div>
-              <div className="space-x-4">
-                <Button onClick={() => Router.push("/templates")} size="lg" variant={"outline"}>
+              <motion.div
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="space-x-4 my-1"
+              >
+                <Button
+                  onClick={() => Router.push("/templates")}
+                  size="lg"
+                  variant={"outline"}
+                >
                   Get Started for Free
                 </Button>
                 <Button
@@ -100,67 +158,25 @@ export default function Page() {
                 >
                   View Templates
                 </Button>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
 
         <section className="w-full py-12 md:py-24 lg:py-32" id="features">
           <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
+            <motion.h2
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12"
+            >
               Why Choose resume.org?
-            </h2>
+            </motion.h2>
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="flex flex-col items-center text-center">
-                <Layout className="h-12 w-12 mb-4 text-primary" />
-                <h3 className="text-xl font-bold mb-2">Variety of Templates</h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  Choose from a wide range of professionally designed templates
-                  to suit your style and industry.
-                </p>
-              </div>
-              <div className="flex flex-col items-center text-center">
-                <Zap className="h-12 w-12 mb-4 text-primary" />
-                <h3 className="text-xl font-bold mb-2">Easy to Use</h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  Our intuitive builder makes creating a standout resume quick
-                  and effortless.
-                </p>
-              </div>
-              <div className="flex flex-col items-center text-center">
-                <Award className="h-12 w-12 mb-4 text-primary" />
-                <h3 className="text-xl font-bold mb-2">ATS-Friendly</h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  Ensure your resume passes Applicant Tracking Systems with our
-                  optimized formats.
-                </p>
-              </div>
-              <div className="flex flex-col items-center text-center">
-                <Download className="h-12 w-12 mb-4 text-primary" />
-                <h3 className="text-xl font-bold mb-2">
-                  Multiple Download Formats
-                </h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  Download your resume in PDF, Word, or plain text formats to
-                  suit any application requirement.
-                </p>
-              </div>
-              <div className="flex flex-col items-center text-center">
-                <Edit className="h-12 w-12 mb-4 text-primary" />
-                <h3 className="text-xl font-bold mb-2">Real-time Editing</h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  See changes to your resume in real-time as you edit, ensuring
-                  perfect formatting every time.
-                </p>
-              </div>
-              <div className="flex flex-col items-center text-center">
-                <Share2 className="h-12 w-12 mb-4 text-primary" />
-                <h3 className="text-xl font-bold mb-2">Easy Sharing</h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  Share your resume directly with employers or on social media
-                  platforms with a single click.
-                </p>
-              </div>
+              {features.map((feature, index) => (
+                <FeatureCard key={index} {...feature} index={index} />
+              ))}
             </div>
           </div>
         </section>
@@ -170,15 +186,24 @@ export default function Page() {
           id="templates"
         >
           <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
+            <motion.h2
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12"
+            >
               Our Templates
-            </h2>
-            <div  className="grid gap-y-6 gap-x-0 sm:grid-cols-2 lg:grid-cols-3 place-items-center w-[80%] mx-auto ">
+            </motion.h2>
+            <div className="grid gap-y-6 gap-x-0 sm:grid-cols-2 lg:grid-cols-3 place-items-center w-[80%] mx-auto ">
               {!IsLoading
                 ? TemplateImages.slice(0, 6)?.map((item) => (
-                    <div
+                    <motion.div
+                      initial="offscreen"
+                      whileInView="onscreen"
+                      variants={cardVariants}
+                      custom={item.id}
                       key={item?.id}
-                      className="relative group overflow-hidden rounded-lg shadow-lg h-[60vh] w-72"
+                      className="relative group overflow-hidden rounded-lg shadow-lg h-[65vh] w-80"
                     >
                       <Image
                         fill
@@ -196,7 +221,7 @@ export default function Page() {
                           Use This Template
                         </Button>
                       </div>
-                    </div>
+                    </motion.div>
                   ))
                 : Array(6)
                     .fill(0)
@@ -277,19 +302,39 @@ export default function Page() {
           </div>
         </section>
 
-        <section ref={(el)=> {componentRef.current[2] = el} } className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground">
+        <section
+          ref={(el) => {
+            componentRef.current[2] = el;
+          }}
+          className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground"
+        >
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                <motion.h2
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
+                >
                   Ready to Build Your Perfect Resume?
-                </h2>
-                <p className="mx-auto max-w-[600px] text-primary-foreground/80 md:text-xl">
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                  className="mx-auto max-w-[600px] text-primary-foreground/80 md:text-xl"
+                >
                   Join thousands of job seekers who have successfully landed
                   their dream jobs with our resume builder.
-                </p>
+                </motion.p>
               </div>
-              <div className="w-full max-w-sm space-y-2">
+              <motion.div
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="w-full max-w-sm space-y-2"
+              >
                 <div className="space-x-4">
                   <Button
                     onClick={() => Router.push("/templates")}
@@ -309,7 +354,7 @@ export default function Page() {
                 <p className="text-xs text-primary-foreground/60">
                   By signing up, you agree to our Terms and Privacy Policy.
                 </p>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
@@ -317,3 +362,58 @@ export default function Page() {
     </div>
   );
 }
+
+interface FeatureProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  index: number;
+}
+function FeatureCard({ icon: Icon, title, description, index }: FeatureProps) {
+  return (
+    <motion.div
+      className="flex flex-col items-center text-center"
+      initial="offscreen"
+      whileInView="onscreen"
+      viewport={{ once: false, amount: 0.8 }}
+      variants={featureVariants}
+      custom={index}
+    >
+      <Icon className="h-12 w-12 mb-4 text-primary" />
+      <h3 className="text-xl font-bold mb-2">{title}</h3>
+      <p className="text-gray-500 dark:text-gray-400">{description}</p>
+    </motion.div>
+  );
+}
+const featureVariants: Variants = {
+  offscreen: {
+    y: 50,
+    opacity: 0,
+  },
+  onscreen: (index) => ({
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      bounce: 0.4,
+      duration: 0.8,
+      delay: index * 0.1,
+    },
+  }),
+};
+
+const cardVariants: Variants = {
+  offscreen: {
+    y: 50,
+    opacity: 0,
+  },
+  onscreen: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      bounce: 0.2,
+      duration: 1,
+    },
+  },
+};

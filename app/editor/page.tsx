@@ -19,6 +19,7 @@ import References from "@/components/TemplateComponents/References";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { Skeleton } from "@/components/ui/skeleton";
 export interface PersonalData {
   name: string;
   role: string;
@@ -356,7 +357,19 @@ export default function ResumeBuilder() {
       }
     });
   };
+  if (isLoading) return <div className="container mx-auto p-4">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="space-y-4 ">
+      <div className="min-h-[87vh] ">
+        <Skeleton className="p-6 min-h-[87vh] bg-secondary dark:bg-card"></Skeleton>
+      </div>
+    </div>
 
+    <Skeleton className="bg-secondary dark:bg-card w-full p-4 rounded-lg shadow-lg  ">
+     
+    </Skeleton>
+  </div>
+</div>
   return (
     !isLoading && (
       <div className="container mx-auto p-4">

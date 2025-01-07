@@ -1,5 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
+
+import React, {  useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Button } from "./ui/button";
 import {
@@ -18,7 +20,7 @@ import { decodeToken } from "@/lib/jwt";
 import { toast } from "react-toastify";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { toastoptions } from "@/lib/utils";
+import { getLargerProfileImage, toastoptions } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { LogOut, Settings, User } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Data {
   email: string;
@@ -43,13 +45,30 @@ const Connection = () => {
     password: "",
   });
   const router = useRouter();
-  const { data: session } = useSession();
-  // console.log(session);
+  const { data: session,status } = useSession();
+
   const [decoded, setdecoded] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   let token;
+  const searchParams = useSearchParams();
+  const error = searchParams.get('error');
   useEffect(() => {
     (async () => {
+      if (status === "authenticated") {
+    
+        toast.success("Logged in successfully", toastoptions);
+        return;
+      }
+      if (error === 'OAuthAccountNotLinked') {
+        toast.error("This email is already linked with another provider.", toastoptions);
+        router.push("/")
+        return;
+      }
+      if(error === 'NotLoggedIn'){
+        toast.error("Please login to continue", toastoptions);
+        router.push("/")
+        return;
+      }
       token = await getCookies();
       if (token) {
         let check = decodeToken(token?.value ?? "") as JwtPayload;
@@ -63,11 +82,12 @@ const Connection = () => {
               }
               toast.success("Logged in successfully", toastoptions);
               setdecoded(check);
+              localStorage.setItem("custom_user", JSON.stringify(check) ?? "");
             })()
           : toast.error("Invalid Token.Try again", toastoptions);
       }
     })();
-  }, []);
+  }, [session,error]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +99,7 @@ const Connection = () => {
       body: JSON.stringify(data),
     });
     let result = await res.json();
-    // console.log(result);
+    
     if (result.status == false)
       return toast.error(result.message, toastoptions);
     token = await getCookies();
@@ -89,6 +109,7 @@ const Connection = () => {
         ? (() => {
             toast.success("Logged in successfully", toastoptions);
             setdecoded(check);
+            localStorage.setItem("custom_user", JSON.stringify(check) ?? "");
           })()
         : toast.error("Invalid Token.Try again", toastoptions);
     }
@@ -106,7 +127,7 @@ const Connection = () => {
       body: JSON.stringify(data),
     });
     let result = await res.json();
-    // console.log(result);
+   
     if (result.status == false)
       return toast.error(result.message, toastoptions);
     else {
@@ -118,6 +139,7 @@ const Connection = () => {
           ? (() => {
               toast.success("Logged in successfully", toastoptions);
               setdecoded(check);
+              localStorage.setItem("custom_user", JSON.stringify(check) ?? "");
             })()
           : toast.error("Invalid Token.Try again", toastoptions);
       }
@@ -130,17 +152,26 @@ const Connection = () => {
     setdata({ ...data, [e.target.id]: e.target.value });
   };
   const handleSignout = async () => {
-    if (session) signOut();
+    if (session) {
+      toast.success("Logged out successfully", toastoptions);
+      setTimeout(() => {
+        signOut()
+      }, 2000);
+    }
     else {
       let token = await clearCookies();
       setdecoded(null);
       setIsDialogOpen(false);
+      localStorage.removeItem("custom_user");
       toast.success("Logged out successfully", toastoptions);
+      setTimeout(() => {
+        router.push("/")
+      }, 3000);
     }
   };
 
   return (
-    <>
+
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
           {session || decoded ? (
@@ -157,7 +188,7 @@ const Connection = () => {
                     //   loading="lazy"
                     // />
                     <Avatar>
-                      <AvatarImage src={session.user?.image ?? ""} />
+                      <AvatarImage src={getLargerProfileImage(session.user?.image ?? "",400)} />
                       <AvatarFallback>io</AvatarFallback>
                     </Avatar>
                   ) : (
@@ -175,10 +206,10 @@ const Connection = () => {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {(session && session.user?.name) ?? decoded.username}
+                        {(session && session.user?.name) ?? decoded.name}
                       </p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        {(session && session.user?.email) ?? decoded?.useremail}
+                        {(session && session.user?.email) ?? decoded?.email}
                       </p>
                     </div>
                   </DropdownMenuLabel>
@@ -338,7 +369,7 @@ const Connection = () => {
           </DialogContent>
         )}
       </Dialog>
-    </>
+
   );
 };
 

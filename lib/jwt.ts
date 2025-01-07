@@ -6,9 +6,9 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET environment variable is not defined");
 }
 
-export const signToken = (username: string , useremail:string) => {
+export const signToken = (name: string , email:string,id:string) => {
   try {
-    return jwt.sign({ username,useremail }, JWT_SECRET, { expiresIn: "2h" });
+    return jwt.sign({ name,email,id }, JWT_SECRET, { expiresIn: "2h" });
   } catch (error) {
     console.error("Error signing token:", error);
     return "";

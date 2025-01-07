@@ -69,15 +69,15 @@ const authOptions:AuthOptions = {
   },
   session: { strategy: "jwt" as SessionStrategy },
   callbacks: {
-    async jwt({ token, account }: { token: any; account?: any }) {
+    async jwt({ token, account,user }: { token: any; account?: any;user:any }) {
       if (account) {
-        console.log(account);
+        token.id = user.id;
         token.access_token = account.access_token; // Manually add access_token
       }
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
-      console.log(session, token);
+      session.id = token.id;
       session.access_token = token.access_token;
       return session;
     },

@@ -19,10 +19,10 @@
 //       key: item.Key,
 //       url: `${process.env.PUBLIC_ACCESS_URL}${item.Key}`,
 //     }));
-//     console.log(data, images);
+//   
 //     return images;
 //   } catch (error) {
-//     console.log(error);
+//  
 //   }
 // }
 import {prisma} from "@/lib/prisma";
@@ -31,7 +31,7 @@ export async function getTemplates() {
     const templates = await prisma.template.findMany();
     return templates;
   } catch (error) {
-    console.log(error);
+ 
   }
 }
 export async function getTemplateData(id: number) {
@@ -51,3 +51,4 @@ export async function getTemplateData(id: number) {
     console.log(error)
   }
 }
+

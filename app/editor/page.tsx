@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { Button } from "@/components/ui/button";
 import PersonalDetails from "@/components/TemplateComponents/PersonalDetails";
 import EducationDetails from "@/components/TemplateComponents/EducationDetails";
@@ -6,8 +7,8 @@ import Common_single_input from "@/components/TemplateComponents/Common_single_i
 import Experience from "@/components/TemplateComponents/Experience";
 import CommonComp from "@/components/TemplateComponents/CommonComp";
 
-import React, { Suspense, useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import {  useSearchParams } from "next/navigation";
 import { getTemplateData } from "@/lib/serveractions";
 import { ArrowRight, ArrowLeft, Save } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -20,6 +21,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
 export interface PersonalData {
   name: string;
   role: string;
@@ -78,28 +80,32 @@ export default function ResumeBuilder() {
   const [Template, setTemplate] = useState<React.FC<any> | null>(null);
   const [isLoading, setisLoading] = useState(true);
   const params = useSearchParams();
-  const router = useRouter();
 
+  let router = useRouter();
+ 
   const handleDownloadPDF = async () => {
     try {
       if (printRef.current) {
-        const canvas = await html2canvas(printRef.current, { scale: 2, useCORS: true });
+        const canvas = await html2canvas(printRef.current, {
+          scale: 2,
+          useCORS: true,
+        });
         const imgData = canvas.toDataURL("image/png");
-  
+
         // Default PDF page width in mm
         const pdfWidth = 210; // A4 width in mm
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width; // Scale height proportionally to the width
-  
+
         // Create jsPDF instance with default width and dynamic height
         const pdf = new jsPDF({
           orientation: pdfHeight > pdfWidth ? "portrait" : "landscape",
           unit: "mm",
           format: [pdfWidth, pdfHeight], // Fixed width, dynamic height
         });
-  
+
         // Add the image to the PDF
         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-  
+
         // Generate a unique file name using timestamp
         const uniqueName = `resume_${new Date().getTime()}.pdf`;
         pdf.save(uniqueName);
@@ -108,12 +114,7 @@ export default function ResumeBuilder() {
       console.error("Error during PDF download:", error);
     }
   };
-  
-  
-  
-  
-  
-  
+
   const func = async () => {
     let id = params.get("template");
     if (!id) router.push("/templates");
@@ -128,7 +129,6 @@ export default function ResumeBuilder() {
         for (const key in templateData) {
           templateData[key] == true ? arr.push(key) : null;
         }
-        console.log(templateData, arr);
         setTabs([...arr]);
       }
     } catch (error) {
@@ -357,21 +357,25 @@ export default function ResumeBuilder() {
       }
     });
   };
-  if (isLoading) return <div className="container mx-auto p-4">
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div className="space-y-4 ">
-      <div className="min-h-[87vh] ">
-        <Skeleton className="p-6 min-h-[87vh] bg-secondary dark:bg-card"></Skeleton>
-      </div>
-    </div>
+  if (isLoading){
 
-    <Skeleton className="bg-secondary dark:bg-card w-full p-4 rounded-lg shadow-lg  ">
-     
-    </Skeleton>
-  </div>
-</div>
+    return (
+      <div className="container mx-auto p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4 ">
+            <div className="min-h-[87vh] ">
+              <Skeleton className="p-6 min-h-[87vh] bg-secondary dark:bg-card"></Skeleton>
+            </div>
+          </div>
+
+          <Skeleton className="bg-secondary dark:bg-card w-full p-4 rounded-lg shadow-lg  "></Skeleton>
+        </div>
+      </div>
+    );
+  }
   return (
     !isLoading && (
+  
       <div className="container mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4 ">
@@ -404,16 +408,16 @@ export default function ResumeBuilder() {
                   >
                     <ArrowLeft className="mr-2" /> Previous
                   </Button>
-                  
-                    <Button className="w-1/4 flex" onClick={handlesave}>
-                      <Save className="mr-1 mb-1 w-6" />
-                      Save Resume
-                    </Button>
-                    <Button className="w-1/4 flex" onClick={handleDownloadPDF}>
-                      <Save className="mr-1 mb-1 w-6" />
-                      Download PDF
-                    </Button>
-                  
+
+                  <Button className="w-1/4 flex" onClick={handlesave}>
+                    <Save className="mr-1 mb-1 w-6" />
+                    Save Resume
+                  </Button>
+                  <Button className="w-1/4 flex" onClick={handleDownloadPDF}>
+                    <Save className="mr-1 mb-1 w-6" />
+                    Download PDF
+                  </Button>
+
                   <Button
                     onClick={handleNext}
                     disabled={tabs.indexOf(activeTab) === tabs.length - 1}
@@ -456,7 +460,7 @@ export default function ResumeBuilder() {
                     // Remove 'Data' suffix from the key and compare it with the tabs
                     const tabKey = key.replace("Data", ""); // This gives you 'PersonalInformation', 'Education', etc.
 
-                    // console.log(tabs, tabKey);
+      ;
                     if (tabs.includes(tabKey)) {
                       // @ts-ignore
                       acc[key] = templateProps[key];
@@ -466,12 +470,13 @@ export default function ResumeBuilder() {
                   {} as Record<string, any> // Ensures that the accumulator is typed correctly
                 );
 
-                console.log(filteredProps);
+              
                 return <Template ref={printRef} {...filteredProps} />;
               })()}
           </div>
         </div>
       </div>
+  
     )
   );
 }

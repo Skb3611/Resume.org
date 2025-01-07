@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     })
 
     let response = NextResponse.json({ message: "User created successfully",status:true,username:name});
-    let token = signToken(user.name ?? "",user.email ?? "");
+    let token = signToken(user.name ?? "",user.email ?? "",user.id??"");
     response.cookies.set('token',token,{httpOnly:true,path:'/',secure:true});
     return response
     

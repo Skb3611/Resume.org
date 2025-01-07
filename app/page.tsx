@@ -71,7 +71,6 @@ export default function Page() {
 
   const componentRef = useRef<HTMLElement[] | null[]>([]);
   useEffect(() => {
-    console.log(componentRef.current);
     // Apply the Vanta Waves effect to each div in the ref array
     componentRef.current.forEach((div) => {
       if (div) {
@@ -102,7 +101,6 @@ export default function Page() {
   useEffect(() => {
     (async () => {
       let images = await getTemplates();
-      console.log(images);
       setTemplateImages(images as TemplateImagesData[]);
       setIsLoading(false);
     })();

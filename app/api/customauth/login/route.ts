@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     let response,token ;
       if (password_check) {
           response = NextResponse.json({ message: "Login Successful", status: true,username:user.name});
-          token = signToken(user.name??"",user.email ?? "");
+          token = signToken(user.name??"",user.email ?? "",user.id??"");
           response.cookies.set("token", token, { path: "/", httpOnly: true });
           return response;
       } else{

@@ -21,7 +21,7 @@ const Template=forwardRef(({
   LanguagesData: LanguagesData[];
   
 },ref:React.Ref<HTMLDivElement>) => {
-  console.log(ref)
+
   return (
     <div ref={ref}  className="flex mx-auto bg-white shadow-lg w-[85%]">
       <div className="bg-slate-700 w-1/3 text-white p-4">
@@ -82,7 +82,7 @@ const Template=forwardRef(({
           </h2>
           {ExperienceData && ExperienceData[0].company
             ? ExperienceData.map((item) => {
-                // console.log(item);
+            
                 return (
                   <div key={item.index} className="mb-2 ml-2">
                     <h3 className="font-semibold text-sm">

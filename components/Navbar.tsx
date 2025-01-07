@@ -1,7 +1,7 @@
 
 import { FileText } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { Suspense } from "react";
 import ThemeButton from "./ThemeButton";
 import Connection from "./Connection";
 
@@ -33,7 +33,9 @@ const Navbar = () => {
         >
           Templates
         </Link>
+        <Suspense fallback={<div></div>}>
         <Connection/>
+        </Suspense>
         <ThemeButton />
       </nav>
     

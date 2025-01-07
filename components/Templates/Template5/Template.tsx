@@ -19,7 +19,7 @@ const Template=forwardRef(({
   SkillsData: SkillsData[];
   ExperienceData: ExperienceData[];
 },ref:React.Ref<HTMLDivElement>) => {
-  console.log(PersonalInformationData);
+ 
   return (
     <div ref={ref} className="w-[90%] mx-auto bg-white shadow-lg p-8">
       {/* Header */}

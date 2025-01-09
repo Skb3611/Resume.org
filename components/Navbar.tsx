@@ -6,8 +6,6 @@ import ThemeButton from "./ThemeButton";
 import Connection from "./Connection";
 
 const Navbar = () => {
-  
-
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center border-b sticky top-0 overflow-hidden z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <Link className="flex items-center justify-center" href="/">

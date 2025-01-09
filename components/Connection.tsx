@@ -15,10 +15,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { getCookies, clearCookies } from "@/lib/getcookies";
+import { getCookies, clearCookies } from "@/lib/serveractions";
 import { decodeToken } from "@/lib/jwt";
 import { toast } from "react-toastify";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { getLargerProfileImage, toastoptions } from "@/lib/utils";
 import {
@@ -46,7 +46,7 @@ const Connection = () => {
   });
   const router = useRouter();
   const { data: session,status } = useSession();
-
+  // console.log(session)
   const [decoded, setdecoded] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   let token;

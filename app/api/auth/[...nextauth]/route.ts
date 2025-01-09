@@ -77,8 +77,8 @@ const authOptions:AuthOptions = {
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
-      session.id = token.id;
       session.access_token = token.access_token;
+      session.user.id=token.id;
       return session;
     },
     async redirect({ url, baseUrl }: { url: any; baseUrl: any }) {

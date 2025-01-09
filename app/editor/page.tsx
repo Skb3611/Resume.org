@@ -8,8 +8,12 @@ import Experience from "@/components/TemplateComponents/Experience";
 import CommonComp from "@/components/TemplateComponents/CommonComp";
 
 import React, { useEffect, useRef, useState } from "react";
-import {  useSearchParams } from "next/navigation";
-import { getTemplateData } from "@/lib/serveractions";
+import { useSearchParams } from "next/navigation";
+import {
+  createTemplate,
+  getTemplateData,
+  updateTemplate,
+} from "@/lib/serveractions";
 import { ArrowRight, ArrowLeft, Save } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,6 +26,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 export interface PersonalData {
   name: string;
   role: string;
@@ -80,9 +85,62 @@ export default function ResumeBuilder() {
   const [Template, setTemplate] = useState<React.FC<any> | null>(null);
   const [isLoading, setisLoading] = useState(true);
   const params = useSearchParams();
-
+  let { data: session, status } = useSession();
   let router = useRouter();
- 
+  const [tabs, setTabs] = useState<String[]>([]);
+  const [progress, setProgress] = useState(0);
+  const [personaldata, setpersonaldata] = useState<PersonalData>({
+    name: "",
+    role: "",
+    aboutme: "",
+    phone: "",
+    email: "",
+    address: "",
+  });
+  const [educationdata, seteducationdata] = useState<EducationData[]>([
+    { index: 0, date: null, degree: "", location: "", university: "" },
+  ]);
+  const [SkillsData, setSkillsData] = useState<SkillsData[]>([
+    { data: "", index: 0 },
+  ]);
+  const [languagesdata, setlanguagesdata] = useState<LanguagesData[]>([
+    { data: "", index: 0 },
+  ]);
+  const [experiencedata, setexperiencedata] = useState<ExperienceData[]>([
+    {
+      index: 0,
+      company: "",
+      position: "",
+      summary: "",
+      startdate: null,
+      enddate: null,
+    },
+  ]);
+  const [awards, setawards] = useState<AwardsData[]>([
+    { index: 0, company: "", title: "", date: null },
+  ]);
+  const [certifications, setcertifications] = useState<CertificationData[]>([
+    { index: 0, company: "", title: "", date: null },
+  ]);
+  const [projects, setprojects] = useState<ProjectsData[]>([
+    {
+      index: 0,
+      title: "",
+      description: "",
+      technologies: "",
+    },
+  ]);
+  const [hobbies, sethobbies] = useState<HobbiesData[]>([
+    { data: "", index: 0 },
+  ]);
+  const [references, setreferences] = useState<ReferencesData>({
+    name: "",
+    position: "",
+    company: "",
+    phone: "",
+  });
+  const [finaldata, setfinaldata] = useState({});
+
   const handleDownloadPDF = async () => {
     try {
       if (printRef.current) {
@@ -138,7 +196,29 @@ export default function ResumeBuilder() {
       setisLoading(false);
     }
   };
-
+  useEffect(() => {
+    (async () => {
+      console.log(session, status);
+      if (status === "authenticated") {
+        await createTemplate(
+          parseInt(params.get("template") as string),
+          (session?.user as { id?: string }).id ?? "",
+          finaldata
+        );
+      }
+    })();
+  }, [session]);
+  useEffect(() => {
+    (async () => {
+      if (status === "authenticated") {
+        await updateTemplate(
+          parseInt(params.get("template") as string),
+          (session?.user as { id?: string }).id ?? "",
+          finaldata
+        );
+      }
+    })();
+  }, [finaldata]);
   useEffect(() => {
     func();
   }, []);
@@ -159,63 +239,10 @@ export default function ResumeBuilder() {
       setawards(parsed?.Awards);
       setfinaldata(parsed);
     }
-
     return () => {};
   }, []);
-  const [tabs, setTabs] = useState<String[]>([]);
-  const [progress, setProgress] = useState(0);
-  const [personaldata, setpersonaldata] = useState<PersonalData>({
-    name: "",
-    role: "",
-    aboutme: "",
-    phone: "",
-    email: "",
-    address: "",
-  });
-  const [educationdata, seteducationdata] = useState<EducationData[]>([
-    { index: 0, date: null, degree: "", location: "", university: "" },
-  ]);
-  const [SkillsData, setSkillsData] = useState<SkillsData[]>([
-    { data: "", index: 0 },
-  ]);
-  const [languagesdata, setlanguagesdata] = useState<LanguagesData[]>([
-    { data: "", index: 0 },
-  ]);
-  const [experiencedata, setexperiencedata] = useState<ExperienceData[]>([
-    {
-      index: 0,
-      company: "",
-      position: "",
-      summary: "",
-      startdate: null,
-      enddate: null,
-    },
-  ]);
-  const [awards, setawards] = useState<AwardsData[]>([
-    { index: 0, company: "", title: "", date: null },
-  ]);
-  const [certifications, setcertifications] = useState<CertificationData[]>([
-    { index: 0, company: "", title: "", date: null },
-  ]);
-  const [projects, setprojects] = useState<ProjectsData[]>([
-    {
-      index: 0,
-      title: "",
-      description: "",
-      technologies: "",
-    },
-  ]);
-  const [hobbies, sethobbies] = useState<HobbiesData[]>([
-    { data: "", index: 0 },
-  ]);
-  const [references, setreferences] = useState<ReferencesData>({
-    name: "",
-    position: "",
-    company: "",
-    phone: "",
-  });
-  const [finaldata, setfinaldata] = useState({});
-  let handlesave = () => {
+
+  let handlesave = async() => {
     setfinaldata({
       ...personaldata,
       Education: educationdata,
@@ -243,6 +270,11 @@ export default function ResumeBuilder() {
         Awards: awards,
       })
     );
+    await updateTemplate(
+      parseInt(params.get("template") as string),
+      (session?.user as { id?: string }).id ?? "",
+      finaldata
+    )
   };
 
   const [activeTab, setActiveTab] = useState("PersonalInformation");
@@ -357,8 +389,7 @@ export default function ResumeBuilder() {
       }
     });
   };
-  if (isLoading){
-
+  if (isLoading) {
     return (
       <div className="container mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -375,7 +406,6 @@ export default function ResumeBuilder() {
   }
   return (
     !isLoading && (
-  
       <div className="container mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4 ">
@@ -460,7 +490,6 @@ export default function ResumeBuilder() {
                     // Remove 'Data' suffix from the key and compare it with the tabs
                     const tabKey = key.replace("Data", ""); // This gives you 'PersonalInformation', 'Education', etc.
 
-      ;
                     if (tabs.includes(tabKey)) {
                       // @ts-ignore
                       acc[key] = templateProps[key];
@@ -470,13 +499,11 @@ export default function ResumeBuilder() {
                   {} as Record<string, any> // Ensures that the accumulator is typed correctly
                 );
 
-              
                 return <Template ref={printRef} {...filteredProps} />;
               })()}
           </div>
         </div>
       </div>
-  
     )
   );
 }

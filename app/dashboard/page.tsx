@@ -2,22 +2,20 @@
 // @ts-ignore
 import WAVES from "vanta/dist/vanta.waves.min";
 import * as THREE from "three";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import {
-  Bell,
-  FileText,
   Edit,
   Trash2,
   Star,
   Clock,
-  LogOut,
   Settings as SettingsIcon,
   Menu,
-  X,
   User,
   FileSpreadsheet,
   Layout,
   History,
+  Download,
+  FileEdit,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -29,14 +27,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -47,11 +38,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Textarea } from "@/components/ui/textarea";
-import { getSession, useSession } from "next-auth/react";
-import { get } from "http";
+
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { getLargerProfileImage } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { getUserTemplates } from "@/lib/serveractions";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const resumeTemplates = [
   { id: "professional", name: "Professional" },
@@ -78,10 +71,11 @@ export default function UserDashboard() {
   const [user, setuser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("profile");
   const componentRef = useRef(null);
+  const [Templates, setTemplates] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   useEffect(() => {
-
     // Apply the Vanta Waves effect to each div in the ref array
     let effectInstance: any;
     if (componentRef.current) {
@@ -96,8 +90,6 @@ export default function UserDashboard() {
         backgroundColor: 0x000000,
       });
     }
-
-    // Cleanup effect when component unmounts
     return () => {
       // @ts-ignore
       effectInstance?.destroy();
@@ -105,6 +97,7 @@ export default function UserDashboard() {
   }, [activeTab]);
 
   useEffect(() => {
+    console.log("_________user effect________");
     if (session) {
       setuser(session?.user);
     } else {
@@ -114,6 +107,18 @@ export default function UserDashboard() {
       }
     }
   }, [session]);
+
+  useEffect(() => {
+    console.log("_________templates effect________");
+    if (user?.id) {
+      (async () => {
+        let templates = await getUserTemplates(user?.id ?? "");
+        console.log(templates);
+        setTemplates(templates);
+      })();
+    }
+    setIsLoading(false);
+  }, [user]);
 
   const handleProfileUpdate = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -135,27 +140,15 @@ export default function UserDashboard() {
     if (url) {
       if (url.includes("google")) {
         return (
-          <img
-            src="logos/google.png"
-            alt="Google"
-            className="w-10 h-10"
-          />
+          <img src="logos/google.png" alt="Google" className="w-10 h-10" />
         );
       } else if (url.includes("pbs.twimg.com")) {
         return (
-          <img
-            src="logos/twitter.png"
-            alt="Twitter"
-            className="w-10 h-10"
-          />
+          <img src="logos/twitter.png" alt="Twitter" className="w-10 h-10" />
         );
       } else if (url.includes("media-exp1.licdn.com")) {
         return (
-          <img
-            src="logos/linkedin.png"
-            alt="LinkedIn"
-            className="w-10 h-10 "
-          />
+          <img src="logos/linkedin.png" alt="LinkedIn" className="w-10 h-10 " />
         );
       } else {
         return <p>Custom_auth</p>;
@@ -185,8 +178,12 @@ export default function UserDashboard() {
             <div className="max-w-6xl m-auto">
               <div className="info mt-28  flex justify-between items-center">
                 <div className="w-1/2">
-                  <h1 className="text-3xl font-semibold w-full">{user?.name}</h1>
-                  <p className="text-lg text-muted-foreground">{user?.email ?? "No email"}</p>
+                  <h1 className="text-3xl font-semibold w-full">
+                    {!isLoading ? user?.name: <Skeleton className="w-2/4 h-8 rounded-md bg-muted my-2"/>}
+                  </h1>
+                  <div className="text-lg text-muted-foreground">
+                    {!isLoading ? user?.email ?? "No email": <Skeleton className="w-3/4 h-5 rounded-md bg-muted my-2"/>}
+                  </div>
                 </div>
                 <div className="flex justify-around w-full">
                   <Card className="w-1/3">
@@ -205,13 +202,13 @@ export default function UserDashboard() {
                         Resumes Created
                       </CardTitle>
                       <CardDescription className=" m-auto text-3xl">
-                        0
+                        {Templates.length}
                       </CardDescription>
                     </CardHeader>
                   </Card>
                 </div>
               </div>
-              <div className="resumes mt-10">
+              <div className="resumes my-10">
                 <Card>
                   <CardHeader>
                     <CardTitle>Saved Resumes</CardTitle>
@@ -219,20 +216,55 @@ export default function UserDashboard() {
                       View and manage your saved resumes
                     </CardDescription>
                     <CardContent className="flex flex-wrap justify-around gap-5">
-                      {Array(3) 
-                        .fill(0)
-                        .map((_, index) => {
+                      {!isLoading && Templates.length == 0 ? (
+                        <div>No resumes</div>
+                      ) : (
+                        Templates.map((item: any) => {
                           return (
-                            <Card key={index} className="w-full sm:w-1/3 lg:w-1/4 p-4 h-[50vh]">
-                              <CardHeader>
-                                <CardTitle>ABC</CardTitle>
-                              </CardHeader>
-                              <CardContent className="relative h-[80%] ">
-                                <Image fill src={"https://pub-8915c2ad1d8147cc9ae47d1905b82505.r2.dev/Templates/Template1/preview.jpg"} alt={""} className="object-contain"></Image>
-                              </CardContent> 
+                            <Card
+                              key={item.index}
+                              className="w-full sm:w-1/3 lg:w-[30%] p-4 h-[60dvh]"
+                            >
+                              <CardContent className="relative h-[40vh] ">
+                                <Image
+                                  fill
+                                  src={`${process.env.NEXT_PUBLIC_PUBLIC_ACCESS_URL}Templates/Template${item.templateId}/preview.jpg`}
+                                  alt={""}
+                                  className="object-contain h-full w-full"
+                                ></Image>
+                              </CardContent>
+                              <CardFooter className="mt-1 flex-col justify-between gap-2">
+                                <div>
+                                  <p className="text-center">
+                                    Created at:{" "}
+                                    {item.createdAt.toLocaleString("en-US", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    })}
+                                  </p>
+                                  <p className="text-center">
+                                    Last updated:{" "}
+                                    {item.updatedAt.toLocaleString("en-US", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    })}
+                                  </p>
+                                </div>
+                                <div className="space-x-4">
+                                  <Button>
+                                    <Download />
+                                  </Button>
+                                  <Button>
+                                    <FileEdit />
+                                  </Button>
+                                </div>
+                              </CardFooter>
                             </Card>
                           );
-                        })}
+                        })
+                      )}
                     </CardContent>
                   </CardHeader>
                 </Card>
@@ -527,9 +559,9 @@ export default function UserDashboard() {
         </header>
 
         {/* Main content area */}
-        <main className="flex-1 overflow-y-auto">
+        <ScrollArea className="flex-1 overflow-y-auto">
           <div className=" mx-auto">{renderContent()}</div>
-        </main>
+        </ScrollArea>
       </div>
     </div>
   );

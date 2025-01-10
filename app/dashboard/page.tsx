@@ -2,7 +2,7 @@
 // @ts-ignore
 import WAVES from "vanta/dist/vanta.waves.min";
 import * as THREE from "three";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Edit,
   Trash2,
@@ -41,10 +41,12 @@ import {
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { getLargerProfileImage } from "@/lib/utils";
+import { getLargerProfileImage, handleDownloadPDF } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getUserTemplates } from "@/lib/serveractions";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
+import ReactDOM from "react-dom/client";
 
 const resumeTemplates = [
   { id: "professional", name: "Professional" },
@@ -73,8 +75,11 @@ export default function UserDashboard() {
   const componentRef = useRef(null);
   const [Templates, setTemplates] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+ const printRef = useRef<HTMLDivElement| null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  let root: ReactDOM.Root | null = null;
   useEffect(() => {
     // Apply the Vanta Waves effect to each div in the ref array
     let effectInstance: any;
@@ -120,6 +125,117 @@ export default function UserDashboard() {
     setIsLoading(false);
   }, [user]);
 
+  
+  
+
+const handleDownload = async (template: any) => {
+ 
+
+  try {
+    // Dynamically import the template component
+    const TemplateModule = await import(`@/components/Templates/Template${template.templateId}/Template`);
+    const Template = TemplateModule.default; // Get the template component
+
+    // Prepare the props for the template
+    const templateProps = prepareTemplateProps(template.data);
+
+    // Ensure ref.current is available
+    if (ref.current) {
+      // Only render if Template is available
+      if (Template) {
+        // Create root if it doesn't exist
+        if (!root) {
+          root = ReactDOM.createRoot(ref.current); // Create root for the container
+        }
+
+        // Use the existing root to render the component dynamically
+        root.render(<Template ref={printRef} {...templateProps} />);
+        if(printRef.current){
+          printRef.current.style.position = "absolute";
+        printRef.current.style.top = "-9999px"; // Move the element far off-screen
+        printRef.current.style.left = "-9999px"; // Ensure it doesn't affect the page layout
+        printRef.current.style.visibility = "hidden"; // Hide it from the page view
+
+        }
+        // Trigger the download after rendering completes
+        setTimeout(() => {
+          handleDownloadPDF(printRef); // Now generate the PDF after render
+
+        }, 500); // 500ms for worst-case rendering time
+      }
+    }
+  } catch (error) {
+    console.error('Error during template rendering or download:', error);
+
+  }
+};
+
+  
+  /**
+   * Dynamically maps template data to Template props.
+   * Ensures that only available data is passed to the Template component.
+   */
+  const prepareTemplateProps = (data: Record<string, any>) => {
+    const templateProps: Record<string, any> = {};
+
+    // Check and map available fields to the expected props
+    if (
+      data.name ||
+      data.role ||
+      data.aboutme ||
+      data.phone ||
+      data.email ||
+      data.address
+    ) {
+      templateProps.PersonalInformationData = {
+        name: data.name || "",
+        role: data.role || "",
+        aboutme: data.aboutme || "",
+        phone: data.phone || "",
+        email: data.email || "",
+        address: data.address || "",
+      };
+    }
+
+    if (data.Education?.length) {
+      templateProps.EducationData = data.Education;
+    }
+
+    if (data.Skills?.length) {
+      templateProps.SkillsData = data.Skills;
+    }
+
+    if (data.Experience?.length) {
+      templateProps.ExperienceData = data.Experience;
+    }
+
+    if (data.Languages?.length) {
+      templateProps.LanguagesData = data.Languages;
+    }
+
+    if (data.Projects?.length) {
+      templateProps.ProjectsData = data.Projects;
+    }
+
+    if (data.Hobbies?.length) {
+      templateProps.HobbiesData = data.Hobbies;
+    }
+
+    if (data.References) {
+      templateProps.ReferencesData = data.References;
+    }
+
+    if (data.Certifications?.length) {
+      templateProps.CertificationsData = data.Certifications;
+    }
+
+    if (data.Awards?.length) {
+      templateProps.AwardsData = data.Awards;
+    }
+
+    return templateProps;
+  };
+
   const handleProfileUpdate = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Implement profile update logic here
@@ -159,118 +275,139 @@ export default function UserDashboard() {
     switch (activeTab) {
       case "profile":
         return (
-          <section>
-            <div
-              ref={componentRef}
-              className="header h-[30dvh] bg-white relative"
-            >
-              <Avatar className="w-52 h-52 rounded-full absolute -bottom-24 left-8 object-cover outline-white outline outline-offset-2">
-                <AvatarImage
-                  src={getLargerProfileImage(user?.image, 400)}
-                  alt="user-image"
-                />
-                <AvatarFallback>
-                  {/* <AvatarImage src={user?.image} alt="user-image" className="w-52 h-52 rounded-full absolute -bottom-24 left-8 object-cover" /> */}{" "}
-                  io
-                </AvatarFallback>
-              </Avatar>
-            </div>
-            <div className="max-w-6xl m-auto">
-              <div className="info mt-28  flex justify-between items-center">
-                <div className="w-1/2">
-                  <h1 className="text-3xl font-semibold w-full">
-                    {!isLoading ? user?.name: <Skeleton className="w-2/4 h-8 rounded-md bg-muted my-2"/>}
-                  </h1>
-                  <div className="text-lg text-muted-foreground">
-                    {!isLoading ? user?.email ?? "No email": <Skeleton className="w-3/4 h-5 rounded-md bg-muted my-2"/>}
+          <>
+            <section className="">
+              <div
+                ref={componentRef}
+                className="header h-[30dvh] bg-white relative"
+              >
+                <Avatar className="w-52 h-52 rounded-full absolute -bottom-24 left-8 object-cover outline-white outline outline-offset-2">
+                  <AvatarImage
+                    src={getLargerProfileImage(user?.image, 400)}
+                    alt="user-image"
+                  />
+                  <AvatarFallback>
+                    {/* <AvatarImage src={user?.image} alt="user-image" className="w-52 h-52 rounded-full absolute -bottom-24 left-8 object-cover" /> */}{" "}
+                    io
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="max-w-6xl m-auto">
+                <div className="info mt-28  flex justify-between items-center">
+                  <div className="w-1/2">
+                    <h1 className="text-3xl font-semibold w-full">
+                      {!isLoading ? (
+                        user?.name
+                      ) : (
+                        <Skeleton className="w-2/4 h-8 rounded-md bg-muted my-2" />
+                      )}
+                    </h1>
+                    <div className="text-lg text-muted-foreground">
+                      {!isLoading ? (
+                        user?.email ?? "No email"
+                      ) : (
+                        <Skeleton className="w-3/4 h-5 rounded-md bg-muted my-2" />
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex justify-around w-full">
+                    <Card className="w-1/3">
+                      <CardHeader>
+                        <CardTitle className="text-center mb-2">
+                          Provider Type
+                        </CardTitle>
+                        <CardDescription className=" m-auto">
+                          {session ? getProvider(user?.image) : "Custom Auth"}
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
+                    <Card className="w-1/3">
+                      <CardHeader>
+                        <CardTitle className="text-center mb-2">
+                          Resumes Created
+                        </CardTitle>
+                        <CardDescription className=" m-auto text-3xl">
+                          {Templates.length}
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
                   </div>
                 </div>
-                <div className="flex justify-around w-full">
-                  <Card className="w-1/3">
+                <div className="resumes my-10">
+                  <Card>
                     <CardHeader>
-                      <CardTitle className="text-center mb-2">
-                        Provider Type
-                      </CardTitle>
-                      <CardDescription className=" m-auto">
-                        {session ? getProvider(user?.image) : "Custom Auth"}
+                      <CardTitle>Saved Resumes</CardTitle>
+                      <CardDescription>
+                        View and manage your saved resumes
                       </CardDescription>
-                    </CardHeader>
-                  </Card>
-                  <Card className="w-1/3">
-                    <CardHeader>
-                      <CardTitle className="text-center mb-2">
-                        Resumes Created
-                      </CardTitle>
-                      <CardDescription className=" m-auto text-3xl">
-                        {Templates.length}
-                      </CardDescription>
+                      <CardContent className="flex flex-wrap justify-around gap-5">
+                        {!isLoading && Templates.length == 0 ? (
+                          <div>No resumes</div>
+                        ) : (
+                          Templates.map((item: any) => {
+                            return (
+                              <Card
+                                key={item.index}
+                                className="w-full sm:w-1/3 lg:w-[30%] p-4 h-[60dvh]"
+                              >
+                                <CardContent className="relative h-[40vh] ">
+                                  <Image
+                                    fill
+                                    src={`${process.env.NEXT_PUBLIC_PUBLIC_ACCESS_URL}Templates/Template${item.templateId}/preview.jpg`}
+                                    alt={""}
+                                    className="object-contain h-full w-full"
+                                  ></Image>
+                                </CardContent>
+                                <CardFooter className="mt-1 flex-col justify-between gap-2">
+                                  <div>
+                                    <p className="text-center">
+                                      Created at:{" "}
+                                      {item.createdAt.toLocaleString("en-US", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                      })}
+                                    </p>
+                                    <p className="text-center">
+                                      Last updated:{" "}
+                                      {item.updatedAt.toLocaleString("en-US", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                      })}
+                                    </p>
+                                  </div>
+                                  <div className="space-x-4">
+                                    <Button
+                                      onClick={() => handleDownload(item)}
+                                    >
+                                      <Download />
+                                    </Button>
+                                    <Button>
+                                      <FileEdit
+                                        onClick={() =>
+                                          router.push(
+                                            `editor?template=${item.templateId}`
+                                          )
+                                        }
+                                      />
+                                    </Button>
+                                  </div>
+                                </CardFooter>
+                              </Card>
+                            );
+                          })
+                        )}
+                      </CardContent>
                     </CardHeader>
                   </Card>
                 </div>
               </div>
-              <div className="resumes my-10">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Saved Resumes</CardTitle>
-                    <CardDescription>
-                      View and manage your saved resumes
-                    </CardDescription>
-                    <CardContent className="flex flex-wrap justify-around gap-5">
-                      {!isLoading && Templates.length == 0 ? (
-                        <div>No resumes</div>
-                      ) : (
-                        Templates.map((item: any) => {
-                          return (
-                            <Card
-                              key={item.index}
-                              className="w-full sm:w-1/3 lg:w-[30%] p-4 h-[60dvh]"
-                            >
-                              <CardContent className="relative h-[40vh] ">
-                                <Image
-                                  fill
-                                  src={`${process.env.NEXT_PUBLIC_PUBLIC_ACCESS_URL}Templates/Template${item.templateId}/preview.jpg`}
-                                  alt={""}
-                                  className="object-contain h-full w-full"
-                                ></Image>
-                              </CardContent>
-                              <CardFooter className="mt-1 flex-col justify-between gap-2">
-                                <div>
-                                  <p className="text-center">
-                                    Created at:{" "}
-                                    {item.createdAt.toLocaleString("en-US", {
-                                      day: "2-digit",
-                                      month: "short",
-                                      year: "numeric",
-                                    })}
-                                  </p>
-                                  <p className="text-center">
-                                    Last updated:{" "}
-                                    {item.updatedAt.toLocaleString("en-US", {
-                                      day: "2-digit",
-                                      month: "short",
-                                      year: "numeric",
-                                    })}
-                                  </p>
-                                </div>
-                                <div className="space-x-4">
-                                  <Button>
-                                    <Download />
-                                  </Button>
-                                  <Button>
-                                    <FileEdit />
-                                  </Button>
-                                </div>
-                              </CardFooter>
-                            </Card>
-                          );
-                        })
-                      )}
-                    </CardContent>
-                  </CardHeader>
-                </Card>
-              </div>
+            </section>
+            <div ref={ref}  className="w-[700px] absolute -top-[9999px] -left-[9999px]">
+              abc
             </div>
-          </section>
+          </>
         );
       case "resumes":
         return (

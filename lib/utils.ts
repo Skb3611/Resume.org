@@ -1,4 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
+import html2canvas from "html2canvas"
+import jsPDF from "jspdf"
 import { ToastPosition } from "react-toastify"
 import { twMerge } from "tailwind-merge"
 
@@ -38,4 +40,35 @@ export function getLargerProfileImage(url: string, size: number = 400) {
       return url; // If no matching platform, return the original URL
     }
   }
+export const handleDownloadPDF = async (printRef: any) => {
+    try {
+      if (printRef.current) {
+        const canvas = await html2canvas(printRef.current, {
+          scale: 2,
+          useCORS: true,
+        });
+        const imgData = canvas.toDataURL("image/png");
+
+        // Default PDF page width in mm
+        const pdfWidth = 210; // A4 width in mm
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width; // Scale height proportionally to the width
+
+        // Create jsPDF instance with default width and dynamic height
+        const pdf = new jsPDF({
+          orientation: pdfHeight > pdfWidth ? "portrait" : "landscape",
+          unit: "mm",
+          format: [pdfWidth, pdfHeight], // Fixed width, dynamic height
+        });
+
+        // Add the image to the PDF
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+        // Generate a unique file name using timestamp
+        const uniqueName = `resume_${new Date().getTime()}.pdf`;
+        pdf.save(uniqueName);
+      }
+    } catch (error) {
+      console.error("Error during PDF download:", error);
+    }
+  };
   

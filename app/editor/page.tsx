@@ -22,11 +22,10 @@ import { String } from "aws-sdk/clients/codepipeline";
 import Projects from "@/components/TemplateComponents/Projects";
 import References from "@/components/TemplateComponents/References";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { handleDownloadPDF } from "@/lib/utils";
 export interface PersonalData {
   name: string;
   role: string;
@@ -141,37 +140,7 @@ export default function ResumeBuilder() {
   });
   const [finaldata, setfinaldata] = useState({});
 
-  const handleDownloadPDF = async () => {
-    try {
-      if (printRef.current) {
-        const canvas = await html2canvas(printRef.current, {
-          scale: 2,
-          useCORS: true,
-        });
-        const imgData = canvas.toDataURL("image/png");
-
-        // Default PDF page width in mm
-        const pdfWidth = 210; // A4 width in mm
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width; // Scale height proportionally to the width
-
-        // Create jsPDF instance with default width and dynamic height
-        const pdf = new jsPDF({
-          orientation: pdfHeight > pdfWidth ? "portrait" : "landscape",
-          unit: "mm",
-          format: [pdfWidth, pdfHeight], // Fixed width, dynamic height
-        });
-
-        // Add the image to the PDF
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-
-        // Generate a unique file name using timestamp
-        const uniqueName = `resume_${new Date().getTime()}.pdf`;
-        pdf.save(uniqueName);
-      }
-    } catch (error) {
-      console.error("Error during PDF download:", error);
-    }
-  };
+  
 
   const func = async () => {
     let id = params.get("template");
@@ -443,7 +412,7 @@ export default function ResumeBuilder() {
                     <Save className="mr-1 mb-1 w-6" />
                     Save Resume
                   </Button>
-                  <Button className="w-1/4 flex" onClick={handleDownloadPDF}>
+                  <Button className="w-1/4 flex" onClick={()=>handleDownloadPDF(printRef)}>
                     <Save className="mr-1 mb-1 w-6" />
                     Download PDF
                   </Button>

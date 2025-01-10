@@ -157,7 +157,7 @@ const Template=forwardRef(({
             </h2>
             <div>
               <div className="text-zinc-600 text-sm space-y-2">
-                {CertificationsData[0].company ?
+                {CertificationsData && CertificationsData[0].company ?
                 CertificationsData.map((item, index) => (
                   <div key={index}>
                     <h3 className="font-semibold text-zinc-800">

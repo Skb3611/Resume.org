@@ -54,11 +54,7 @@ const Connection = () => {
   const error = searchParams.get('error');
   useEffect(() => {
     (async () => {
-      if (status === "authenticated") {
-    
-        toast.success("Logged in successfully", toastoptions);
-        return;
-      }
+      
       if (error === 'OAuthAccountNotLinked') {
         toast.error("This email is already linked with another provider.", toastoptions);
         router.push("/")

@@ -51,7 +51,7 @@ const EducationDetails = ({
       <div className="flex flex-wrap gap-2">
         <Carousel className="w-[90%] mx-auto">
           <CarouselContent>
-            {data.map((item) => (
+            {data && data.map((item) => (
               <CarouselItem className="basis-1/2" key={item.index}>
                 <CardWrapper
                   handleInputChange={handleInputChange}

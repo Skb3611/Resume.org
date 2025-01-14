@@ -1,33 +1,39 @@
 "use server";
-// import AWS from "aws-sdk";
-// import { prisma } from "./prisma";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import bcrypt from "bcryptjs";
 
-// const s3 = new AWS.S3({
-//   accessKeyId: process.env.ACCESS_KEY_ID,
-//   secretAccessKey: process.env.SECRET_ACCESS_KEY,
-//   endpoint: process.env.ENDPOINT,
-// });
-// const params = {
-//   Bucket: "resume-builder",
-// };
-// export async function getAllTemplates() {
-//   try {
-//     const data = await s3.listObjectsV2(params).promise();
-//     const images = data.Contents?.filter((item) =>
-//       item.Key?.includes(".jpg")
-//     ).map((item) => ({
-//       key: item.Key,
-//       url: `${process.env.PUBLIC_ACCESS_URL}${item.Key}`,
-//     }));
-//
-//     return images;
-//   } catch (error) {
-//
-//   }
-// }
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: process.env.ACCESS_KEY_ID ?? "",
+    secretAccessKey: process.env.SECRET_ACCESS_KEY ?? "",
+  },
+  endpoint: process.env.ENDPOINT ?? "",
+  forcePathStyle: true,
+  region: "auto",
+});
+
+export async function uploadImg(id: string, file: string){
+  try{
+    const base64 = file.split(",")[1]; // Remove the "data:image/png;base64," part
+    const fileBuffer = Buffer.from(base64, "base64");
+    const command = new PutObjectCommand({
+      Bucket: "resume-builder",
+      Key: `UserProfile/${id}.png`,
+      Body: fileBuffer,
+      ContentType: "image/png",
+    });
+    const data = await s3.send(command);
+    console.log(data);
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
 import { prisma } from "@/lib/prisma";
 import { InputJsonValue } from "@prisma/client/runtime/library";
 import { cookies } from "next/headers";
+import { signToken } from "./jwt";
 
 export async function getTemplates() {
   try {
@@ -60,14 +66,14 @@ export async function createTemplate(
 ) {
   try {
     let check = await prisma.userTemplateRecord.findUnique({
-      where:{
-        userId_templateId:{
-          userId:userid,
-          templateId:templateId
-        }
-      }
-    })
-    if(!check){
+      where: {
+        userId_templateId: {
+          userId: userid,
+          templateId: templateId,
+        },
+      },
+    });
+    if (!check) {
       let bool = await prisma.userTemplateRecord.create({
         data: {
           userId: userid,
@@ -75,9 +81,9 @@ export async function createTemplate(
           data: data,
         },
       });
-      return
+      return true;
     }
-    
+    return false;
   } catch (error) {
     console.log(error);
   }
@@ -97,22 +103,136 @@ export async function updateTemplate(
         data: data,
       },
     });
+    if (bool) return true;
+    return false;
   } catch (error) {
     console.log(error);
   }
 }
 export async function getUserTemplates(userid: string) {
-  try{
+  try {
     let templates = await prisma.userTemplateRecord.findMany({
-      where:{
-        userId:userid
-      }
-    })
-    return templates
-  }catch(error){
-    console.log(error)
+      where: {
+        userId: userid,
+      },
+    });
+    return templates;
+  } catch (error) {
+    console.log(error);
   }
 }
+
+export async function getUserTemplateData(templateId: number, userid: string) {
+  try {
+    let data = await prisma.userTemplateRecord.findUnique({
+      where: {
+        userId_templateId: {
+          userId: userid,
+          templateId: templateId,
+        },
+      },
+    });
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function updateUserDetails(
+  id: string,
+  name: string,
+  email: string,
+  image: string
+) {
+  try {
+    if (image.includes("base64,")) {
+      let imgupdate = await uploadImg(id, image);
+      if (!imgupdate) return false;
+    }
+
+    let bool = await prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name: name,
+        email: email,
+        image: `${process.env.PUBLIC_ACCESS_URL}UserProfile/${id}.png`,
+      },
+      include:{
+        accounts:true
+      }
+    });
+    // console.log(bool)
+    if (bool){
+      if(bool.accounts[0].type == "custom_auth"){
+        let obj = {
+          name:bool.name,
+          email:bool.email,
+          id:bool.id,
+          image:bool.image
+        }
+        let token = signToken(bool)
+        console.log(token)
+        return token
+      }
+      return true;
+    } 
+
+    return false;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+export async function updateUserPassword(
+  id: string,
+  currentPassword: string,
+  newPassword: string
+) {
+  try {
+    let user = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!user) return false;
+    if (user) {
+      if (user.password == null) {
+        let hashedPassword = await bcrypt.hash(newPassword, 10);
+        let update = await prisma.user.update({
+          where: {
+            id: id,
+          },
+          data: {
+            password: hashedPassword,
+          },
+        });
+        if (update) return true;
+        return false;
+      }
+      let bool = await bcrypt.compare(currentPassword, user.password ?? "");
+      if (bool) {
+        let hashedPassword = await bcrypt.hash(newPassword, 10);
+        let update = await prisma.user.update({
+          where: {
+            id: id,
+          },
+          data: {
+            password: hashedPassword,
+          },
+        });
+        if (update) return true;
+        return false;
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+
 
 export async function getCookies() {
   const cookiestore = cookies();

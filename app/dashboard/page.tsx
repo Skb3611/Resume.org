@@ -43,10 +43,12 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { getLargerProfileImage, handleDownloadPDF } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getUserTemplates } from "@/lib/serveractions";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import ReactDOM from "react-dom/client";
+import TemplatesPage from "../templates/page";
+import UserSettings from "@/components/User_Settings";
+import { getUserTemplates } from "@/lib/serveractions";
 
 const resumeTemplates = [
   { id: "professional", name: "Professional" },
@@ -71,13 +73,14 @@ const historyLog = [
 export default function UserDashboard() {
   const { data: session } = useSession();
   const [user, setuser] = useState<any>(null);
+  console.log(user)
   const [activeTab, setActiveTab] = useState("profile");
   const componentRef = useRef(null);
   const [Templates, setTemplates] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
- const printRef = useRef<HTMLDivElement| null>(null);
+  const printRef = useRef<HTMLDivElement | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   let root: ReactDOM.Root | null = null;
   useEffect(() => {
@@ -125,51 +128,56 @@ export default function UserDashboard() {
     setIsLoading(false);
   }, [user]);
 
-  
-  
+  const handleDownload = async (template: any) => {
+    try {
+      // Dynamically import the template component
+      const TemplateModule = await import(
+        `@/components/Templates/Template${template.templateId}/Template`
+      );
+      const Template = TemplateModule.default; // Get the template component
 
-const handleDownload = async (template: any) => {
- 
+      // Prepare the props for the template
+      const templateProps = prepareTemplateProps(template.data);
 
-  try {
-    // Dynamically import the template component
-    const TemplateModule = await import(`@/components/Templates/Template${template.templateId}/Template`);
-    const Template = TemplateModule.default; // Get the template component
+      // Ensure ref.current is available
+      if (ref.current) {
+        // Only render if Template is available
+        if (Template) {
+          // Create root if it doesn't exist
+          if (!root) {
+            root = ReactDOM.createRoot(ref.current); // Create root for the container
+          }
 
-    // Prepare the props for the template
-    const templateProps = prepareTemplateProps(template.data);
-
-    // Ensure ref.current is available
-    if (ref.current) {
-      // Only render if Template is available
-      if (Template) {
-        // Create root if it doesn't exist
-        if (!root) {
-          root = ReactDOM.createRoot(ref.current); // Create root for the container
+          // Use the existing root to render the component dynamically
+          root.render(<Template ref={printRef} {...templateProps} />);
+          if (printRef.current) {
+            printRef.current.style.position = "absolute";
+            printRef.current.style.top = "-9999px"; // Move the element far off-screen
+            printRef.current.style.left = "-9999px"; // Ensure it doesn't affect the page layout
+            printRef.current.style.visibility = "hidden"; // Hide it from the page view
+          }
+          // Trigger the download after rendering completes
+          setTimeout(() => {
+            handleDownloadPDF(printRef); // Now generate the PDF after render
+          }, 500); // 500ms for worst-case rendering time
         }
-
-        // Use the existing root to render the component dynamically
-        root.render(<Template ref={printRef} {...templateProps} />);
-        if(printRef.current){
-          printRef.current.style.position = "absolute";
-        printRef.current.style.top = "-9999px"; // Move the element far off-screen
-        printRef.current.style.left = "-9999px"; // Ensure it doesn't affect the page layout
-        printRef.current.style.visibility = "hidden"; // Hide it from the page view
-
-        }
-        // Trigger the download after rendering completes
-        setTimeout(() => {
-          handleDownloadPDF(printRef); // Now generate the PDF after render
-
-        }, 500); // 500ms for worst-case rendering time
       }
+    } catch (error) {
+      console.error("Error during template rendering or download:", error);
     }
-  } catch (error) {
-    console.error('Error during template rendering or download:', error);
-
+  };
+  const getProvider=(provider:string) => {
+    switch(provider){
+      case "google":
+        return <Image  height={40} width={40} src="/logos/google.png" alt="Google"/>;
+      case "twitter":
+        return <Image height={40} width={40} src="/logos/twitter.png" alt="Twitter"/>;
+      case "linkedin":
+        return <Image  height={40} width={40}src="/logos/linkedin.png" alt="Linkedin"/>;
+      default:
+        return "Custom Auth "
   }
-};
-
+}
   
   /**
    * Dynamically maps template data to Template props.
@@ -252,25 +260,7 @@ const handleDownload = async (template: any) => {
     // Implement resume deletion logic here
     console.log(`Deleting resume with id: ${id}`);
   };
-  function getProvider(url: string) {
-    if (url) {
-      if (url.includes("google")) {
-        return (
-          <img src="logos/google.png" alt="Google" className="w-10 h-10" />
-        );
-      } else if (url.includes("pbs.twimg.com")) {
-        return (
-          <img src="logos/twitter.png" alt="Twitter" className="w-10 h-10" />
-        );
-      } else if (url.includes("media-exp1.licdn.com")) {
-        return (
-          <img src="logos/linkedin.png" alt="LinkedIn" className="w-10 h-10 " />
-        );
-      } else {
-        return <p>Custom_auth</p>;
-      }
-    }
-  }
+  
   const renderContent = () => {
     switch (activeTab) {
       case "profile":
@@ -281,14 +271,18 @@ const handleDownload = async (template: any) => {
                 ref={componentRef}
                 className="header h-[30dvh] bg-white relative"
               >
-                <Avatar className="w-52 h-52 rounded-full absolute -bottom-24 left-8 object-cover outline-white outline outline-offset-2">
+                <Avatar className="w-52 h-52 rounded-full absolute -bottom-24 left-8 object-cover outline-foreground outline outline-offset-1 bg-black bg-background">
                   <AvatarImage
                     src={getLargerProfileImage(user?.image, 400)}
                     alt="user-image"
                   />
                   <AvatarFallback>
                     {/* <AvatarImage src={user?.image} alt="user-image" className="w-52 h-52 rounded-full absolute -bottom-24 left-8 object-cover" /> */}{" "}
-                    io
+                    {user?.name
+                      .split(" ")
+                      .map((n: string) => n[0])
+                      .join("")
+                      .toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </div>
@@ -317,7 +311,7 @@ const handleDownload = async (template: any) => {
                           Provider Type
                         </CardTitle>
                         <CardDescription className=" m-auto">
-                          {session ? getProvider(user?.image) : "Custom Auth"}
+                          {user ? getProvider(user?.provider as string):"Loading..."}
                         </CardDescription>
                       </CardHeader>
                     </Card>
@@ -340,224 +334,88 @@ const handleDownload = async (template: any) => {
                       <CardDescription>
                         View and manage your saved resumes
                       </CardDescription>
-                      <CardContent className="flex flex-wrap justify-around gap-5">
-                        {!isLoading && Templates.length == 0 ? (
-                          <div>No resumes</div>
-                        ) : (
-                          Templates.map((item: any) => {
-                            return (
-                              <Card
-                                key={item.index}
-                                className="w-full sm:w-1/3 lg:w-[30%] p-4 h-[60dvh]"
-                              >
-                                <CardContent className="relative h-[40vh] ">
-                                  <Image
-                                    fill
-                                    src={`${process.env.NEXT_PUBLIC_PUBLIC_ACCESS_URL}Templates/Template${item.templateId}/preview.jpg`}
-                                    alt={""}
-                                    className="object-contain h-full w-full"
-                                  ></Image>
-                                </CardContent>
-                                <CardFooter className="mt-1 flex-col justify-between gap-2">
-                                  <div>
-                                    <p className="text-center">
-                                      Created at:{" "}
-                                      {item.createdAt.toLocaleString("en-US", {
-                                        day: "2-digit",
-                                        month: "short",
-                                        year: "numeric",
-                                      })}
-                                    </p>
-                                    <p className="text-center">
-                                      Last updated:{" "}
-                                      {item.updatedAt.toLocaleString("en-US", {
-                                        day: "2-digit",
-                                        month: "short",
-                                        year: "numeric",
-                                      })}
-                                    </p>
-                                  </div>
-                                  <div className="space-x-4">
-                                    <Button
-                                      onClick={() => handleDownload(item)}
-                                    >
-                                      <Download />
-                                    </Button>
-                                    <Button>
-                                      <FileEdit
-                                        onClick={() =>
-                                          router.push(
-                                            `editor?template=${item.templateId}`
-                                          )
-                                        }
-                                      />
-                                    </Button>
-                                  </div>
-                                </CardFooter>
-                              </Card>
-                            );
-                          })
-                        )}
-                      </CardContent>
                     </CardHeader>
+                    <CardContent key={"Resumes"} className="flex flex-wrap justify-between gap-5">
+                      {!isLoading && Templates.length == 0 ? (
+                        <div key="NoResumes">No resumes</div>
+                      ) : (
+                        Templates.map((item: any) => {
+                          return (
+                            <Card
+                              key={item.id}
+                              className="w-full sm:w-1/3 lg:w-[30%] p-4 h-[60dvh]"
+                            >
+                              <CardContent className="relative h-[40vh] ">
+                                <Image
+                                  fill
+                                  src={`${process.env.NEXT_PUBLIC_PUBLIC_ACCESS_URL}Templates/Template${item.templateId}/preview.jpg`}
+                                  alt={""}
+                                  className="object-contain h-full w-full"
+                                ></Image>
+                              </CardContent>
+                              <CardFooter className="mt-1 flex-col justify-between gap-2">
+                                <div>
+                                  <p className="text-center">
+                                    Created at:{" "}
+                                    {item.createdAt.toLocaleString("en-US", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    })}
+                                  </p>
+                                  <p className="text-center">
+                                    Last updated:{" "}
+                                    {item.updatedAt.toLocaleString("en-US", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    })}
+                                  </p>
+                                </div>
+                                <div className="space-x-4">
+                                  <Button onClick={() => handleDownload(item)}>
+                                    <Download />
+                                  </Button>
+                                  <Button>
+                                    <FileEdit
+                                      onClick={() =>
+                                        router.push(
+                                          `editor?template=${item.templateId}`
+                                        )
+                                      }
+                                    />
+                                  </Button>
+                                </div>
+                              </CardFooter>
+                            </Card>
+                          );
+                        })
+                      )}
+                    </CardContent>
                   </Card>
                 </div>
               </div>
             </section>
-            <div ref={ref}  className="w-[700px] absolute -top-[9999px] -left-[9999px]">
+            <div
+              ref={ref}
+              className="w-[700px] absolute -top-[9999px] -left-[9999px]"
+            >
               abc
             </div>
           </>
         );
-      case "resumes":
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Saved Resumes</CardTitle>
-              <CardDescription>
-                View and manage your saved resumes
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {savedResumes.map((resume) => (
-                  <div
-                    key={resume.id}
-                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0"
-                  >
-                    <div>
-                      <h3 className="text-sm font-medium">{resume.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Last edited: {resume.lastEdited}
-                      </p>
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm">
-                        <Edit className="h-4 w-4 mr-1" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteResume(resume.id)}
-                      >
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        );
+
       case "templates":
         return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Resume Templates</CardTitle>
-              <CardDescription>
-                Quick access to your favorite templates
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {resumeTemplates.map((template) => (
-                  <Card key={template.id}>
-                    <CardHeader>
-                      <CardTitle>{template.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="aspect-video bg-muted"></div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full sm:w-auto"
-                      >
-                        Preview
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full sm:w-auto"
-                      >
-                        <Star className="h-4 w-4 mr-1" />
-                        Favorite
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="max-w-6xl m-auto my-5">
+            <TemplatesPage />
+          </div>
         );
       case "settings":
         return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Settings</CardTitle>
-              <CardDescription>Manage your account preferences</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium">Change Password</h3>
-                <form onSubmit={handlePasswordChange} className="space-y-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="current-password">Current Password</Label>
-                    <Input id="current-password" type="password" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="new-password">New Password</Label>
-                    <Input id="new-password" type="password" />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="confirm-password">
-                      Confirm New Password
-                    </Label>
-                    <Input id="confirm-password" type="password" />
-                  </div>
-                  <Button type="submit">Change Password</Button>
-                </form>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium">
-                  Notification Preferences
-                </h3>
-                <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="email-notifications" />
-                  <Label htmlFor="email-notifications">
-                    Receive email notifications
-                  </Label>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      case "history":
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Activity History</CardTitle>
-              <CardDescription>Recent actions on your account</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {historyLog.map((log, index) => (
-                  <div key={index} className="flex items-center">
-                    <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">{log.action}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {log.timestamp}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="max-w-6xl m-auto my-5">
+            <UserSettings />
+          </div>
         );
       default:
         return null;
@@ -577,14 +435,7 @@ const handleDownload = async (template: any) => {
             <User className="mr-3 h-5 w-5" />
             Profile
           </Button>
-          <Button
-            variant={activeTab === "resumes" ? "default" : "ghost"}
-            className="py-5 w-full justify-start text-lg font-medium"
-            onClick={() => setActiveTab("resumes")}
-          >
-            <FileSpreadsheet className="mr-3 h-5 w-5" />
-            Resumes
-          </Button>
+
           <Button
             variant={activeTab === "templates" ? "default" : "ghost"}
             className="py-5 w-full justify-start text-lg font-medium"
@@ -600,14 +451,6 @@ const handleDownload = async (template: any) => {
           >
             <SettingsIcon className="mr-3 h-5 w-5" />
             Settings
-          </Button>
-          <Button
-            variant={activeTab === "history" ? "default" : "ghost"}
-            className="py-5 w-full justify-start text-lg font-medium"
-            onClick={() => setActiveTab("history")}
-          >
-            <History className="mr-3 h-5 w-5" />
-            History
           </Button>
         </nav>
       </aside>

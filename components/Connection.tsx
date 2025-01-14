@@ -185,12 +185,20 @@ const Connection = () => {
                     // />
                     <Avatar>
                       <AvatarImage src={getLargerProfileImage(session.user?.image ?? "",400)} />
-                      <AvatarFallback>io</AvatarFallback>
+                      <AvatarFallback>
+                        {
+                          session?.user?.name?.split(' ').map((n:string) => n[0]).join('').toUpperCase()
+                        }
+                      </AvatarFallback>
                     </Avatar>
                   ) : (
                     <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" />
-                      <AvatarFallback>io</AvatarFallback>
+                      <AvatarImage src="/" />
+                      <AvatarFallback>
+                        {
+                          decoded.name.split(' ').map((n:string) => n[0]).join('').toUpperCase()
+                        }
+                      </AvatarFallback>
                     </Avatar>
                   )}
                 </DropdownMenuTrigger>

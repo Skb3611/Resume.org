@@ -44,7 +44,7 @@ export default function data({
           onChange={handleChange}
           value={data?.aboutme || ""}
           name="aboutme"
-          rows={3}
+          rows={4}
         ></Textarea>
       </div>
       <div>

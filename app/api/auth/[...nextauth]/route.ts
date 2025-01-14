@@ -76,9 +76,17 @@ const authOptions:AuthOptions = {
       }
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
-      session.access_token = token.access_token;
-      session.user.id=token.id;
+    async session({ session, token,user }: { session: any; token: any, user:any}) {
+      const dbUser = await prisma.user.findUnique({ where: { id: token?.id }, include:{accounts:true} });
+
+      session.user = {
+        id: dbUser?.id,
+        name: dbUser?.name,
+        email: dbUser?.email,
+        image: dbUser?.image,
+        provider: dbUser?.accounts[0].provider,
+      };
+
       return session;
     },
     async redirect({ url, baseUrl }: { url: any; baseUrl: any }) {

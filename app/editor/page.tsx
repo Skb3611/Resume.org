@@ -12,12 +12,13 @@ import { useSearchParams } from "next/navigation";
 import {
   createTemplate,
   getTemplateData,
+  getUserTemplateData,
   updateTemplate,
 } from "@/lib/serveractions";
 import { ArrowRight, ArrowLeft, Save } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { String } from "aws-sdk/clients/codepipeline";
+
 
 import Projects from "@/components/TemplateComponents/Projects";
 import References from "@/components/TemplateComponents/References";
@@ -25,7 +26,8 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { handleDownloadPDF } from "@/lib/utils";
+import { handleDownloadPDF, toastoptions } from "@/lib/utils";
+import { toast } from "react-toastify";
 export interface PersonalData {
   name: string;
   role: string;
@@ -86,7 +88,7 @@ export default function ResumeBuilder() {
   const params = useSearchParams();
   let { data: session, status } = useSession();
   let router = useRouter();
-  const [tabs, setTabs] = useState<String[]>([]);
+  const [tabs, setTabs] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
   const [personaldata, setpersonaldata] = useState<PersonalData>({
     name: "",
@@ -140,8 +142,6 @@ export default function ResumeBuilder() {
   });
   const [finaldata, setfinaldata] = useState({});
 
-  
-
   const func = async () => {
     let id = params.get("template");
     if (!id) router.push("/templates");
@@ -167,16 +167,44 @@ export default function ResumeBuilder() {
   };
   useEffect(() => {
     (async () => {
-      console.log(session, status);
-      if (status === "authenticated") {
-        await createTemplate(
+      // console.log(session, status);
+      let custom_user = JSON.parse(localStorage.getItem("custom_user")??"");
+      if (status === "authenticated" || custom_user) {
+        let isTemplateCreated = await createTemplate(
           parseInt(params.get("template") as string),
-          (session?.user as { id?: string }).id ?? "",
+          (session?.user as { id?: string })?.id ?? custom_user?.id ?? "",
           finaldata
         );
+        if (!isTemplateCreated) {
+          let data = await getUserTemplateData(
+            parseInt(params.get("template") as string),
+            (session?.user as { id?: string })?.id ?? custom_user?.id ?? ""
+          );
+          // console.log(data);
+          if(data?.data && Object.keys(data.data).length !== 0){
+            localStorage.setItem("resume", JSON.stringify(data?.data));
+          }
+        }
+        const resume = localStorage.getItem("resume");
+        if (resume) {
+          const parsed = JSON.parse(resume);
+          setpersonaldata(parsed);
+          seteducationdata(parsed?.Education);
+          setSkillsData(parsed?.Skills);
+          setexperiencedata(parsed?.Experience);
+          setProgress(parsed?.progress);
+          setlanguagesdata(parsed?.Languages);
+          setprojects(parsed?.Projects);
+          sethobbies(parsed?.Hobbies);
+          setreferences(parsed?.References);
+          setcertifications(parsed?.Certifications);
+          setawards(parsed?.Awards);
+          // setfinaldata(parsed);
+        }
       }
     })();
   }, [session]);
+
   useEffect(() => {
     (async () => {
       if (status === "authenticated") {
@@ -191,27 +219,9 @@ export default function ResumeBuilder() {
   useEffect(() => {
     func();
   }, []);
-  useEffect(() => {
-    const resume = localStorage.getItem("resume");
-    if (resume) {
-      const parsed = JSON.parse(resume);
-      setpersonaldata(parsed);
-      seteducationdata(parsed?.Education);
-      setSkillsData(parsed?.Skills);
-      setexperiencedata(parsed?.Experience);
-      setProgress(parsed?.progress);
-      setlanguagesdata(parsed?.Languages);
-      setprojects(parsed?.Projects);
-      sethobbies(parsed?.Hobbies);
-      setreferences(parsed?.References);
-      setcertifications(parsed?.Certifications);
-      setawards(parsed?.Awards);
-      setfinaldata(parsed);
-    }
-    return () => {};
-  }, []);
 
-  let handlesave = async() => {
+
+  let handlesave = async () => {
     setfinaldata({
       ...personaldata,
       Education: educationdata,
@@ -239,14 +249,19 @@ export default function ResumeBuilder() {
         Awards: awards,
       })
     );
-    await updateTemplate(
+    let bool = updateTemplate(
       parseInt(params.get("template") as string),
       (session?.user as { id?: string }).id ?? "",
       finaldata
-    )
+    );
+    if(bool) toast.promise(bool,{
+      pending:'Saving...',
+      success:'Saved successfully',
+      error:'Error saving'
+    },toastoptions)
   };
 
-  const [activeTab, setActiveTab] = useState("PersonalInformation");
+  const [activeTab, setActiveTab] = useState<string>("PersonalInformation");
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -412,7 +427,10 @@ export default function ResumeBuilder() {
                     <Save className="mr-1 mb-1 w-6" />
                     Save Resume
                   </Button>
-                  <Button className="w-1/4 flex" onClick={()=>handleDownloadPDF(printRef)}>
+                  <Button
+                    className="w-1/4 flex"
+                    onClick={() => handleDownloadPDF(printRef)}
+                  >
                     <Save className="mr-1 mb-1 w-6" />
                     Download PDF
                   </Button>

@@ -193,7 +193,7 @@ const Connection = () => {
                     </Avatar>
                   ) : (
                     <Avatar>
-                      <AvatarImage src="/" />
+                      <AvatarImage src={getLargerProfileImage(decoded.user?.image ?? "",400)} />
                       <AvatarFallback>
                         {
                           decoded.name.split(' ').map((n:string) => n[0]).join('').toUpperCase()

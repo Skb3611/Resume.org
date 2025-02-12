@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Layout, Zap, Award, Download, Edit, Share2 } from "lucide-react";
+import { Layout, Zap, Award, Download, Edit, Share2, Link } from 'lucide-react';
 import Image from "next/image";
 import { getTemplates } from "@/lib/serveractions";
 import { useEffect, useRef, useState } from "react";
@@ -17,6 +17,7 @@ import WAVES from "vanta/dist/vanta.waves.min";
 import { useRouter } from "next/navigation";
 import * as THREE from "three";
 import type { Variants } from "motion/react";
+
 interface TemplateImagesData {
   id: number;
   name: string;
@@ -24,6 +25,7 @@ interface TemplateImagesData {
   description: string;
   category: string[];
 }
+
 export default function Page() {
   const features = [
     {
@@ -113,24 +115,26 @@ export default function Page() {
           ref={(el) => {
             componentRef.current[0] = el;
           }}
-          className="h-[91vh] w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800"
+          className="h-[91vh] w-full py-8 sm:py-12 md:py-16 lg:py-24 xl:py-32 bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800"
         >
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-4 text-center">
+          <div className="container mx-auto px-4 md:px-6 h-full">
+            <div className="flex flex-col items-center space-y-4 text-center h-full justify-center">
               <div>
                 <motion.h1
                   initial={{ opacity: 0, y: 25 }}
+                  viewport={{once:true}}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none mb-5 text-white"
+                  className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tighter mb-3 sm:mb-5 text-white"
                 >
                   Create Your Perfect Resume in Minutes
                 </motion.h1>
                 <motion.p
                   initial={{ opacity: 0, y: 25 }}
+                  viewport={{once:true}}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.5 }}
-                  className="mx-auto max-w-[700px] text-white md:text-xl "
+                  className="mx-auto max-w-[700px] text-white text-sm sm:text-base md:text-lg xl:text-xl"
                 >
                   Build a professional resume that stands out with our
                   easy-to-use builder and variety of expert-designed templates.
@@ -138,14 +142,16 @@ export default function Page() {
               </div>
               <motion.div
                 initial={{ opacity: 0, y: 25 }}
+                viewport={{once:true}}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
-                className="space-x-4 my-1"
+                className="space-y-2 sm:space-y-0 sm:space-x-4 my-1 flex flex-col items-center justify-center sm:flex-row"
               >
                 <Button
                   onClick={() => Router.push("/templates")}
                   size="lg"
                   variant={"outline"}
+                  className="w-full"
                 >
                   Get Started for Free
                 </Button>
@@ -153,6 +159,7 @@ export default function Page() {
                   onClick={() => Router.push("/templates")}
                   variant="outline"
                   size="lg"
+                  className="w-full"
                 >
                   View Templates
                 </Button>
@@ -161,17 +168,18 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32" id="features">
-          <div className="container px-4 md:px-6">
+        <section className="w-full py-8 sm:py-12 md:py-16 lg:py-24" id="features">
+          <div className="container mx-auto px-4 md:px-6">
             <motion.h2
               initial={{ opacity: 0, y: 25 }}
+              viewport={{once:true}}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-center mb-8 sm:mb-12"
             >
               Why Choose resume.org?
             </motion.h2>
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {features.map((feature, index) => (
                 <FeatureCard key={index} {...feature} index={index} />
               ))}
@@ -180,61 +188,65 @@ export default function Page() {
         </section>
 
         <section
-          className=" py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800 w-full"
+          className="py-8 sm:py-12 md:py-16 lg:py-24 bg-gray-100 dark:bg-gray-800 w-full"
           id="templates"
         >
-          <div className="container px-4 md:px-6">
+          <div className="container mx-auto px-4 md:px-6">
             <motion.h2
               initial={{ opacity: 0, y: 25 }}
+              viewport={{once:true}}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-center mb-8 sm:mb-12"
             >
               Our Templates
             </motion.h2>
-            <div className="grid gap-y-6 gap-x-0 sm:grid-cols-2 lg:grid-cols-3 place-items-center w-[80%] mx-auto ">
-              {!IsLoading
-                ? TemplateImages.slice(0, 6)?.map((item) => (
-                    <motion.div
-                      initial="offscreen"
-                      whileInView="onscreen"
-                      variants={cardVariants}
-                      custom={item.id}
-                      key={item?.id}
-                      className="relative group overflow-hidden rounded-lg shadow-lg h-[65vh] w-80"
-                    >
-                      <Image
-                        fill
-                        src={item?.thumbnail ?? ""}
-                        alt={`Template ${item.id}`}
-                        className="  object-fill transition-transform group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          onClick={() =>
-                            Router.push("/editor?template=" + item?.id)
-                          }
-                          variant="secondary"
-                        >
-                          Use This Template
-                        </Button>
-                      </div>
-                    </motion.div>
-                  ))
-                : Array(6)
-                    .fill(0)
-                    .map((item) => {
-                      return (
-                        <div
-                          key={Math.random()}
-                          className="relative group overflow-hidden rounded-lg shadow-lg h-[60vh] w-72"
-                        >
-                          <Skeleton className="h-full w-full bg-foreground/10" />
-                        </div>
-                      );
-                    })}
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8 container lg:max-w-6xl mx-auto">
+            {!IsLoading
+          ? TemplateImages.slice(0, 6)?.map((item) => (
+              <motion.div
+              
+              onClick={() => Router.push(`/editor?template=${item?.id}`)}
+              initial={{ opacity: 0, y: 25 }}
+              viewport={{once:true}}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+
+                key={item.id}
+                className="group relative aspect-[3/4] overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-xl"
+              >
+                <Image
+                  fill
+                  src={item?.thumbnail ?? ""}
+                  alt={`${item?.id} template`}
+                  className="w-full h-full object-fill transition-transform duration-300 group-hover:scale-105"
+                  
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 hidden md:block">
+                  <Button asChild variant="secondary" className="z-10">
+                    <Link href={`/editor?template=${item?.id}`}>
+                      Use This Template
+                    </Link>
+                  </Button>
+                </div>
+              </motion.div>
+            ))
+          : Array(6)
+              .fill(0)
+              .map((_, index) => (
+                <motion.div
+                initial={{ opacity: 0, y: 25 }}
+                viewport={{once:true}}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                  key={index}
+                  className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md"
+                >
+                  <Skeleton className="w-full h-full object-cover bg-foreground/10" />
+                </motion.div>
+              ))}
             </div>
-            <div className="mt-12 text-center">
+            <div className="mt-8 sm:mt-12 text-center">
               <Button
                 onClick={() => Router.push("/templates")}
                 variant="outline"
@@ -246,9 +258,9 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
+        <section className="w-full py-8 sm:py-12 md:py-16 lg:py-24">
+          <div className="container mx-auto px-4 md:px-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-center mb-8 sm:mb-12">
               Frequently Asked Questions
             </h2>
             <Accordion
@@ -304,24 +316,26 @@ export default function Page() {
           ref={(el) => {
             componentRef.current[2] = el;
           }}
-          className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground"
+          className="w-full py-8 sm:py-12 md:py-16 lg:py-24 bg-primary text-primary-foreground"
         >
-          <div className="container px-4 md:px-6">
+          <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
                 <motion.h2
                   initial={{ opacity: 0, y: 25 }}
+                  viewport={{once:true}}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter"
                 >
                   Ready to Build Your Perfect Resume?
                 </motion.h2>
                 <motion.p
                   initial={{ opacity: 0, y: 25 }}
+                  viewport={{once:true}}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.5 }}
-                  className="mx-auto max-w-[600px] text-primary-foreground/80 md:text-xl"
+                  className="mx-auto max-w-[600px] text-primary-foreground/80 text-sm sm:text-base md:text-lg"
                 >
                   Join thousands of job seekers who have successfully landed
                   their dream jobs with our resume builder.
@@ -329,15 +343,17 @@ export default function Page() {
               </div>
               <motion.div
                 initial={{ opacity: 0, y: 25 }}
+                viewport={{once:true}}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
                 className="w-full max-w-sm space-y-2"
               >
-                <div className="space-x-4">
+                <div className="space-y-2 sm:space-y-0 sm:space-x-4">
                   <Button
                     onClick={() => Router.push("/templates")}
                     size="lg"
                     variant="secondary"
+                    className="w-full sm:w-auto mb-2 sm:mb-0"
                   >
                     Get Started for Free
                   </Button>
@@ -345,6 +361,7 @@ export default function Page() {
                     onClick={() => Router.push("/templates")}
                     variant="secondary"
                     size="lg"
+                    className="w-full sm:w-auto"
                   >
                     View Templates
                   </Button>
@@ -367,22 +384,24 @@ interface FeatureProps {
   description: string;
   index: number;
 }
+
 function FeatureCard({ icon: Icon, title, description, index }: FeatureProps) {
   return (
     <motion.div
       className="flex flex-col items-center text-center"
       initial="offscreen"
+      viewport={{once:true}}
       whileInView="onscreen"
-      viewport={{ once: false, amount: 0.8 }}
       variants={featureVariants}
       custom={index}
     >
-      <Icon className="h-12 w-12 mb-4 text-primary" />
-      <h3 className="text-xl font-bold mb-2">{title}</h3>
-      <p className="text-gray-500 dark:text-gray-400">{description}</p>
+      <Icon className="h-10 w-10 sm:h-12 sm:w-12 mb-4 text-primary" />
+      <h3 className="text-lg sm:text-xl font-bold mb-2">{title}</h3>
+      <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">{description}</p>
     </motion.div>
   );
 }
+
 const featureVariants: Variants = {
   offscreen: {
     y: 50,

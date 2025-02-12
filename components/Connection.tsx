@@ -168,7 +168,7 @@ const Connection = () => {
 
   return (
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} >
         <DialogTrigger asChild>
           {session || decoded ? (
             <Button variant={"link"} size={"icon"} className="p-0">
@@ -203,7 +203,7 @@ const Connection = () => {
                   )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className="w-56 mt-1"
+                  className="w-56 md:mt-1 mt-2"
                   align="end"
                   forceMount
                 >

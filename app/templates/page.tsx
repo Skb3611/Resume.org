@@ -74,12 +74,12 @@ export default function TemplatesPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 min-h-[89vh]">
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-3xl font-bold mb-6 text-center"
+        className=" text-xl md:text-3xl font-bold mb-6 text-center"
       >
         Choose Your Resume Template
       </motion.h1>
@@ -89,14 +89,14 @@ export default function TemplatesPage() {
         transition={{ duration: 0.5,delay:0.2 }}
       >
         <ScrollArea className="w-full whitespace-nowrap rounded-md border mb-8">
-          <div className="flex justify-center items-center w-full space-x-4 p-4">
+          <div className="flex flex-wrap sm:flex-nowrap justify-start sm:justify-center items-center w-full p-2 sm:p-4 gap-2 sm:gap-4 ">
             {categories.map((category) => (
               <Button
                 onClick={() => showTemplates(category)}
                 key={category}
                 variant="outline"
                 size={"lg"}
-                className={`flex-shrink-0 focus:bg-primary`}
+                className={`flex-shrink-0 focus:bg-primary w-[48%] sm:w-auto`}
               >
                 {category}
               </Button>
@@ -112,7 +112,7 @@ export default function TemplatesPage() {
         initial="hidden"
         animate="visible"
         key={currentCategory} // Key forces re-render when category changes
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 container lg:max-w-6xl mx-auto"
+        className="grid grid-cols-2  lg:grid-cols-3 gap-3 md:gap-8 container lg:max-w-6xl mx-auto"
       >
         {!isLoading
           ? Templates.map((item) => (

@@ -244,22 +244,11 @@ export default function UserDashboard() {
     return templateProps;
   };
 
-  const handleProfileUpdate = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Implement profile update logic here
-    console.log("Profile updated");
-  };
+ 
 
-  const handlePasswordChange = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Implement password change logic here
-    console.log("Password changed");
-  };
+  
 
-  const handleDeleteResume = (id: number) => {
-    // Implement resume deletion logic here
-    console.log(`Deleting resume with id: ${id}`);
-  };
+ 
   
   const renderContent = () => {
     switch (activeTab) {

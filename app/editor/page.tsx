@@ -168,7 +168,7 @@ export default function ResumeBuilder() {
   useEffect(() => {
     (async () => {
       // console.log(session, status);
-      let custom_user = JSON.parse(localStorage.getItem("custom_user")??"");
+      let custom_user = JSON.parse(localStorage.getItem("custom_user")??"{}");
       if (status === "authenticated" || custom_user) {
         let isTemplateCreated = await createTemplate(
           parseInt(params.get("template") as string),

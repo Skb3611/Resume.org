@@ -4,26 +4,9 @@ import React from "react";
 const Footer = () => {
   return (
     <footer className="flex flex-col gap-2 sm:flex-row py-5 w-full shrink-0 items-center px-4 md:px-6 border-t">
-      <p className="text-xs text-gray-500 dark:text-gray-400">
+      <p className="text-xs text-center text-gray-500 dark:text-gray-400 w-full">
         © {new Date().getFullYear()} resume.org. All rights reserved.
       </p>
-      <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-        <Link className="text-xs hover:underline underline-offset-4" href="#">
-          Terms of Service
-        </Link>
-        <Link className="text-xs hover:underline underline-offset-4" href="#">
-          Privacy
-        </Link>
-        <Link className="text-xs hover:underline underline-offset-4" href="#">
-          About
-        </Link>
-        <Link className="text-xs hover:underline underline-offset-4" href="#">
-          Contact
-        </Link>
-        <Link className="text-xs hover:underline underline-offset-4" href="#">
-          Blog
-        </Link>
-      </nav>
     </footer>
   );
 };

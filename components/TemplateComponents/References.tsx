@@ -101,7 +101,7 @@ const CardWrapper = ({
   // removeCard: (index: number) => void;
 }) => {
   return (
-    <Card className="w-1/2">
+    <Card className="lg:w-1/2">
       <CardHeader>
         <CardTitle>Add a Reference</CardTitle>
       </CardHeader>

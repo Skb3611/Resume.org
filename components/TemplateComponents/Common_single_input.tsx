@@ -79,7 +79,7 @@ const CardWrapper = ({
   title: string;
 }) => {
   return (
-    <Card className="w-[40%]">
+    <Card className="lg:w-[40%]">
       <CardHeader className="pb-2">
         <CardTitle>Add a {title}</CardTitle>
       </CardHeader>

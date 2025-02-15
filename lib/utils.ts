@@ -43,6 +43,7 @@ export function getLargerProfileImage(url: string, size: number = 400) {
 export const handleDownloadPDF = async (printRef: any) => {
     try {
       if (printRef.current) {
+        console.log(printRef.current)
         const canvas = await html2canvas(printRef.current, {
           scale: 2,
           useCORS: true,

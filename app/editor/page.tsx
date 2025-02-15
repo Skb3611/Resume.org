@@ -1,4 +1,5 @@
 "use client";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 export const dynamic = "force-dynamic";
 import { Button } from "@/components/ui/button";
 import PersonalDetails from "@/components/TemplateComponents/PersonalDetails";
@@ -15,11 +16,10 @@ import {
   getUserTemplateData,
   updateTemplate,
 } from "@/lib/serveractions";
-import { ArrowRight, ArrowLeft, Save } from "lucide-react";
+import { ArrowRight, ArrowLeft, Save, Download, Bookmark } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-
+import ReactDOM from "react-dom/client";
 import Projects from "@/components/TemplateComponents/Projects";
 import References from "@/components/TemplateComponents/References";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -82,7 +82,9 @@ export interface ReferencesData {
 }
 
 export default function ResumeBuilder() {
+  let root: ReactDOM.Root | null = null
   const printRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [Template, setTemplate] = useState<React.FC<any> | null>(null);
   const [isLoading, setisLoading] = useState(true);
   const params = useSearchParams();
@@ -280,6 +282,72 @@ export default function ResumeBuilder() {
       setActiveTab(tabs[currentIndex - 1]);
     }
   };
+  const renderTemplate = () => {
+    const templateProps = {
+      PersonalInformationData: {
+        name: personaldata.name,
+        role: personaldata.role,
+        aboutme: personaldata.aboutme,
+        phone: personaldata.phone,
+        email: personaldata.email,
+        address: personaldata.address,
+      },
+      EducationData: educationdata,
+      SkillsData: SkillsData,
+      ExperienceData: experiencedata,
+      LanguagesData: languagesdata,
+      ProjectsData: projects,
+      HobbiesData: hobbies,
+      ReferencesData: references,
+      CertificationsData: certifications,
+      AwardsData: awards,
+    };
+
+    const filteredProps: Record<string, any> = Object.keys(
+      templateProps
+    ).reduce(
+      (acc, key) => {
+        // Remove 'Data' suffix from the key and compare it with the tabs
+        const tabKey = key.replace("Data", ""); // This gives you 'PersonalInformation', 'Education', etc.
+
+        if (tabs.includes(tabKey)) {
+          // @ts-ignore
+          acc[key] = templateProps[key];
+        }
+        return acc;
+      },
+      {} as Record<string, any> // Ensures that the accumulator is typed correctly
+    );
+
+    return Template && <Template ref={printRef} {...filteredProps} />;
+  }
+
+  const handleDownload = () => {
+    console.log("aaaaaaaaaaaaaaaa")
+    try{
+      console.log(ref.current)
+      if (ref.current){
+        // Only render if Template is available
+        if (Template){
+          // Create root if it doesn't exist
+          if (!root) {
+            root = ReactDOM.createRoot(ref.current); // Create root for the container
+          }
+
+          // Use the existing root to render the component dynamically
+          root.render(renderTemplate());
+          // Trigger the download after rendering completes
+          setTimeout(() => {
+            handleDownloadPDF(printRef); // Now generate the PDF after render
+          }, 500); // 500ms for worst-case rendering time
+        }
+      }
+    }catch(error){
+      console.error("Error during PDF download:", error);
+      
+
+    }
+  }
   const renderComponent = () => {
     return tabs.map((tab) => {
       switch (tab) {
@@ -394,16 +462,16 @@ export default function ResumeBuilder() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4 ">
             <div className="min-h-[87vh] ">
-              <Card className="p-6 min-h-[87vh] flex flex-col justify-between">
+              <Card className="md:p-6 p-4 min-h-[87vh] flex flex-col justify-between">
                 <Tabs value={activeTab} onValueChange={handleTabChange}>
                   <ScrollArea className="flex w-full h-full ">
-                    <TabsList className="flex flex-nowrap w-full h-12 overflow-hidden py-2 justify-around">
+                    <TabsList className="flex flex-nowrap w-full h-10 md:h-12 overflow-hidden md:py-2 py-1 justify-around">
                       {tabs.map((item) => {
                         return (
                           <TabsTrigger
                             key={item}
                             value={item}
-                            className="py-1.5 px-4"
+                            className="py-1.5 px-4 text-xs md:text-sm"
                           >
                             {item}
                           </TabsTrigger>
@@ -414,83 +482,70 @@ export default function ResumeBuilder() {
                   </ScrollArea>
                   {renderComponent()}
                 </Tabs>
-                <div className="flex justify-between mt-3">
+                <div className="flex justify-between gap-2 lg:gap-0 mt-3">
                   <Button
                     onClick={handlePrev}
-                    className="w-1/5 "
+                    className="w-1/5 hidden lg:flex"
                     disabled={tabs.indexOf(activeTab) === 0}
                   >
-                    <ArrowLeft className="mr-2" /> Previous
+                    <ArrowLeft className="mr-2" /> 
+                    <span className="hidden md:inline">Previous</span>
                   </Button>
 
-                  <Button className="w-1/4 flex" onClick={handlesave}>
-                    <Save className="mr-1 mb-1 w-6" />
-                    Save Resume
+                  <Button className="w-1/2 lg:w-1/4 flex" onClick={handlesave}>
+                    <Bookmark className="mr-1 mb-1 h-6" />
+                    <span>
+
+                    Save 
+                    </span>
                   </Button>
                   <Button
-                    className="w-1/4 flex"
-                    onClick={() => handleDownloadPDF(printRef)}
+                    className="w-1/2 lg:w-1/4 flex"
+                    onClick={handleDownload}
                   >
-                    <Save className="mr-1 mb-1 w-6" />
-                    Download PDF
+                    <Download className="mr-1 mb-1 h-6" />
+                    <span>
+                    Download 
+                    </span>
                   </Button>
 
                   <Button
                     onClick={handleNext}
                     disabled={tabs.indexOf(activeTab) === tabs.length - 1}
-                    className="w-1/5"
+                    className="w-1/5 hidden lg:flex"
                   >
-                    Next <ArrowRight className="ml-2" />
+                    <span className="hidden md:inline">Next</span>
+                     <ArrowRight className="ml-2" />
                   </Button>
                 </div>
               </Card>
             </div>
           </div>
-
-          <div className="bg-secondary dark:bg-card w-full p-4 rounded-lg shadow-lg  ">
-            {Template &&
-              (() => {
-                const templateProps = {
-                  PersonalInformationData: {
-                    name: personaldata.name,
-                    role: personaldata.role,
-                    aboutme: personaldata.aboutme,
-                    phone: personaldata.phone,
-                    email: personaldata.email,
-                    address: personaldata.address,
-                  },
-                  EducationData: educationdata,
-                  SkillsData: SkillsData,
-                  ExperienceData: experiencedata,
-                  LanguagesData: languagesdata,
-                  ProjectsData: projects,
-                  HobbiesData: hobbies,
-                  ReferencesData: references,
-                  CertificationsData: certifications,
-                  AwardsData: awards,
-                };
-
-                const filteredProps: Record<string, any> = Object.keys(
-                  templateProps
-                ).reduce(
-                  (acc, key) => {
-                    // Remove 'Data' suffix from the key and compare it with the tabs
-                    const tabKey = key.replace("Data", ""); // This gives you 'PersonalInformation', 'Education', etc.
-
-                    if (tabs.includes(tabKey)) {
-                      // @ts-ignore
-                      acc[key] = templateProps[key];
-                    }
-                    return acc;
-                  },
-                  {} as Record<string, any> // Ensures that the accumulator is typed correctly
-                );
-
-                return <Template ref={printRef} {...filteredProps} />;
-              })()}
+          <div className="bg-secondary dark:bg-card w-full p-4 rounded-lg shadow-lg md:block hidden  ">
+            {Template && renderTemplate()
+              }
+          </div>
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button className="w-full">View Resume</Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="h-screen w-screen">
+                <div className="bg-secondary dark:bg-card w-full  rounded-lg shadow-lg h-full overflow-auto">
+                  {Template && renderTemplate()}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
+        <div
+              ref={ref}
+              className="w-[450px] absolute -top-[9999px] -left-[9999px] h-full"
+            >
+              abc
+            </div>
       </div>
+      
     )
   );
 }

@@ -62,7 +62,7 @@ const Component = ({
         <Carousel className="w-[90%] mx-auto">
           <CarouselContent>
             {data.map((item) => (
-              <CarouselItem className="basis-1/2" key={item.index}>
+              <CarouselItem className="lg:basis-1/2" key={item.index}>
                 <CardWrapper
                   title={title}
                   handleInputChange={handleInputChange}

@@ -52,7 +52,7 @@ const EducationDetails = ({
         <Carousel className="w-[90%] mx-auto">
           <CarouselContent>
             {data && data.map((item) => (
-              <CarouselItem className="basis-1/2" key={item.index}>
+              <CarouselItem className="lg:basis-1/2" key={item.index}>
                 <CardWrapper
                   handleInputChange={handleInputChange}
                   data={item}
@@ -92,10 +92,11 @@ const CardWrapper = ({
 }) => {
   return (
     <Card className="p-4">
-      <CardContent className="pb-2">
+      <CardContent className="p-0 lg:p-6 pb-2 ">
         <div className="mb-2">
-          <Label htmlFor="degree">Degree</Label>
+          <Label className="text-sm" htmlFor="degree">Degree</Label>
           <Input
+          className="text-xs lg:text-sm"
             id="degree"
             name="degree"
             value={data.degree}
@@ -105,12 +106,13 @@ const CardWrapper = ({
           />
         </div>
         <div className="mb-2 flex flex-col gap-2">
-          <Label htmlFor="date">Year of Completion</Label>
+          <Label className="text-sm lg:text-base" htmlFor="date">Year of Completion</Label>
           <DatePicker handleInputChange={handleInputChange} data={data} />
         </div>
         <div className="mb-2">
-          <Label htmlFor="location">Location</Label>
+          <Label className="text-sm lg:text-base" htmlFor="location">Location</Label>
           <Input
+          className="text-xs lg:text-sm"
             id="location"
             name="location"
             value={data.location}
@@ -120,8 +122,9 @@ const CardWrapper = ({
           />
         </div>
         <div className="mb-2">
-          <Label htmlFor="University">University</Label>
+          <Label className="text-sm lg:text-base" htmlFor="University">University</Label>
           <Input
+          className="text-xs lg:text-sm"
             id="university"
             name="university"
             value={data.university}

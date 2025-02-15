@@ -8,6 +8,7 @@ import { getTemplates } from "@/lib/serveractions";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion"; // Import motion from framer-motion
 import { delay } from "motion";
+import { useRouter } from "next/navigation";
 
 const categories = [
   "All",
@@ -44,6 +45,7 @@ const itemVariants = {
 };
 
 export default function TemplatesPage() {
+  const router = useRouter();
   const [data, setData] = useState<TemplateImagesData[]>([]);
   const [Templates, setTemplates] = useState<TemplateImagesData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -117,6 +119,7 @@ export default function TemplatesPage() {
         {!isLoading
           ? Templates.map((item) => (
               <motion.div
+              onClick={()=>router.push(`/editor?template=${item.id}`)}
                 key={item.id}
                 className="group relative aspect-[3/4] overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-xl"
                 variants={itemVariants}
@@ -127,7 +130,7 @@ export default function TemplatesPage() {
                   alt={`${item?.id} template`}
                   className="w-full h-full object-fill transition-transform duration-300 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4">
+                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 md:flex flex-col items-center justify-center p-4 hidden">
                   <Button asChild variant="secondary" className="z-10">
                     <Link href={`/editor?template=${item?.id}`}>
                       Use This Template

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Footer from "@/components/Footer";
 import SessionWrapper from "@/components/SessionWrapper";
@@ -18,7 +17,6 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
-
 export const metadata: Metadata = {
   title: "Resume.io",
   description: "Build a professional resume in minutes",
@@ -29,20 +27,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
 
+        <SessionWrapper>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
           >
-          <SessionWrapper>
-            <Navbar />
+            {/* <Navbar /> */}
             <ToastContainer 
             position="top-center"
             autoClose={2000}
@@ -57,8 +56,8 @@ export default function RootLayout({
             />
             {children}
 
-          </SessionWrapper>
         </ThemeProvider>
+          </SessionWrapper>
         <Footer />
 
       </body>

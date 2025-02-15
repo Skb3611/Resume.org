@@ -18,8 +18,9 @@ export default function data({
   return (
     <>
       <div>
-        <Label htmlFor="name">Name</Label>
+        <Label className="text-xs lg:text-sm" htmlFor="name">Name</Label>
         <Input
+        className="text-xs lg:text-sm"
         placeholder="eg. John Doe"
           id="name"
           name="name"
@@ -28,8 +29,9 @@ export default function data({
         />
       </div>
       <div>
-        <Label htmlFor="role">Role</Label>
+        <Label className="text-xs lg:text-sm" htmlFor="role">Role</Label>
         <Input
+        className="text-xs lg:text-sm"
         placeholder="eg. Journalist, Editor"
           id="role"
           name="role"
@@ -38,8 +40,9 @@ export default function data({
         />
       </div>
       <div>
-        <Label htmlFor="aboutme">About me</Label>
+        <Label className="text-xs lg:text-sm" htmlFor="aboutme">About me</Label>
         <Textarea
+        className="text-xs lg:text-sm"
         placeholder="eg. I am a journalist passionate about uncovering the truth and producing high-quality content."
           onChange={handleChange}
           value={data?.aboutme || ""}
@@ -48,8 +51,9 @@ export default function data({
         ></Textarea>
       </div>
       <div>
-        <Label htmlFor="phone">Phone number</Label>
+        <Label className="text-xs lg:text-sm" htmlFor="phone">Phone number</Label>
         <Input
+        className="text-xs lg:text-sm"
           placeholder="eg. +1 (555) 555-5555"
           type="tel"
           id="phone"
@@ -59,8 +63,9 @@ export default function data({
         />
       </div>
       <div>
-        <Label htmlFor="email">Email</Label>
+        <Label className="text-xs lg:text-sm" htmlFor="email">Email</Label>
         <Input
+        className="text-xs lg:text-sm"
           placeholder="eg. john@example.com"
           type="email"
           id="email"
@@ -70,8 +75,9 @@ export default function data({
         />
       </div>
       <div>
-        <Label htmlFor="location">City, Country</Label>
+        <Label className="text-xs lg:text-sm" htmlFor="location">City, Country</Label>
         <Input
+        className="text-xs lg:text-sm"
           placeholder="eg. New York, USA"
           id="address"
           name="address"

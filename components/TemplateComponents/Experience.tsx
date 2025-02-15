@@ -70,7 +70,7 @@ const Experience = ({
   return (
     <div className="mb-2">
 
-      <Carousel className="w-[80%] mx-auto">
+      <Carousel className="lg:w-[80%] w-[90%] mx-auto">
         <CarouselContent>
           {data.map((item) => {
             return (
@@ -116,10 +116,11 @@ const CardWrapper = ({
         <CardHeader className="p-4">
           <CardTitle>Add Your Experience</CardTitle>
         </CardHeader>
-        <CardContent className="pb-0">
+        <CardContent className="pb-0 px-4 lg:p-6">
           <div className="mb-3">
-            <Label htmlFor="company">Company</Label>
+            <Label className="text-sm" htmlFor="company">Company</Label>
             <Input
+            className="text-xs lg:text-sm"
               value={data.company}
               type="text"
               id="company"
@@ -131,8 +132,9 @@ const CardWrapper = ({
             />
           </div>
           <div className="mb-3">
-            <Label htmlFor="position">Position</Label>
+            <Label className="text-sm" htmlFor="position">Position</Label>
             <Input
+            className="text-xs lg:text-sm"
               value={data.position}
               type="text"
               id="position"
@@ -144,10 +146,9 @@ const CardWrapper = ({
             />
           </div>
 
-            <Label  > Work Duration</Label>
-          <div className="dates flex mt-1 gap-2">
-
-          <div className="flex flex-col gap-1 mb-2 w-1/2">
+            <Label className="text-sm"  > Work Duration</Label>
+          <div className="dates flex flex-col lg:flex-row mt-1 gap-2">
+          <div className="flex flex-col gap-1 mb-2 lg:w-1/2">
             <DatePicker
               handleInputChange={handleInputChange}
               data={data}
@@ -155,8 +156,8 @@ const CardWrapper = ({
               value={data.startdate}
             />
           </div>
-          <div className="flex flex-col gap-1 mb-2 w-1/2">
-            {/* <Label htmlFor="endDate">End Date</Label> */}
+          <div className="flex flex-col gap-1 mb-2 lg:w-1/2">
+            {/* <Label className="text-sm" htmlFor="endDate">End Date</Label> */}
             <DatePicker
               handleInputChange={handleInputChange}
               data={data}
@@ -166,7 +167,7 @@ const CardWrapper = ({
           </div>
           </div>
           <div className="mb-2">
-            <Label htmlFor="summary">Short Summary</Label>
+            <Label className="text-sm" htmlFor="summary">Short Summary</Label>
             <Textarea
               value={data.summary}
               id="summary"

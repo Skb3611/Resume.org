@@ -1,15 +1,15 @@
-'use client'
+"use client";
 
-import { FileText, Menu } from 'lucide-react'
-import Link from "next/link"
-import React, { Suspense, useState } from "react"
-import ThemeButton from "./ThemeButton"
-import Connection from "./Connection"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
+import { FileText, Menu } from "lucide-react";
+import Link from "next/link";
+import React, { Suspense, useState } from "react";
+import ThemeButton from "./ThemeButton";
+import Connection from "./Connection";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   const NavItems = () => (
     <>
@@ -34,9 +34,8 @@ const Navbar = () => {
       >
         Templates
       </Link>
-      
     </>
-  )
+  );
 
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center border-b sticky top-0 overflow-hidden z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -47,32 +46,36 @@ const Navbar = () => {
       <nav className="ml-auto h-full items-center hidden md:flex md:gap-4 lg:gap-6">
         <NavItems />
         <Suspense fallback={<div></div>}>
-        <Connection />
-      </Suspense>
+          <Connection />
+        </Suspense>
         <ThemeButton />
       </nav>
       <div className="ml-auto md:hidden flex justify-center items-center gap-2">
-      <Suspense fallback={<div></div>}>
-        <Connection />
-      </Suspense>
+        <Suspense fallback={<div></div>}>
+          <Connection />
+        </Suspense>
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Menu className="h-6 w-6" />
+            <Button variant="outline"  size="icon">
+              <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
           <SheetContent side="right">
             <nav className="flex flex-col gap-4 mt-4">
               <NavItems />
-              <ThemeButton />
+              <div className="flex justify-between items-center gap-2">
+                <p className="text-sm font-medium hover:underline underline-offset-4">
+                  Change Theme
+                </p>
+                <ThemeButton />
+              </div>
             </nav>
           </SheetContent>
         </Sheet>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Navbar
-
+export default Navbar;

@@ -56,7 +56,7 @@ const Projects = ({
   return (
     <>
       <div className="flex flex-wrap">
-        <Carousel className="w-[70%] mx-auto">
+        <Carousel className="lg:w-[70%] w-[90%] mx-auto">
           <CarouselContent>
             {data.map((item) => (
               <CarouselItem  key={item.index}>
@@ -98,8 +98,9 @@ const CardWrapper = ({
       </CardHeader>
       <CardContent>
         <form>
-            <Label htmlFor="title">Title</Label>
+            <Label className="text-sm lg:text-base" htmlFor="title">Title</Label>
             <Input
+            className="text-xs lg:text-sm"
               value={data.title}
               id="title"
               type="text"
@@ -108,8 +109,9 @@ const CardWrapper = ({
                 handleInputChange(data.index, "title", e.target.value)
               }
             />
-            <Label htmlFor="description">Description</Label>
+            <Label className="text-sm lg:text-base" htmlFor="description">Description</Label>
             <Textarea
+            className="text-xs lg:text-sm"
               value={data.description}
               id="description"
               name="description"
@@ -119,8 +121,9 @@ const CardWrapper = ({
                 handleInputChange(data.index, "description", e.target.value)
               }
             />
-            <Label htmlFor="technologies">Technologies</Label>
+            <Label className="text-sm lg:text-base" htmlFor="technologies">Technologies</Label>
             <Input
+            className="text-xs lg:text-sm"
               value={data.technologies}
               id="technologies"
               type="text"

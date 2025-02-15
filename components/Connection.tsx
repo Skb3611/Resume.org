@@ -244,7 +244,7 @@ const Connection = () => {
               </DropdownMenu>
             </Button>
           ) : (
-            <Button variant="outline">Login / Signup</Button>
+            <Button variant="outline" className="text-xs sm:text-sm p-2 sm:px-4 sm:py-2 ">Login / Signup</Button>
           )}
         </DialogTrigger>
         {!(session || decoded) && (

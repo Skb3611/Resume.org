@@ -13,7 +13,11 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .text-xxs{
+    font-size: 7px
+  }
 }
+
 
 @layer base {
   :root {

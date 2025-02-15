@@ -119,7 +119,7 @@ export default function AccountSettings() {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full mt-12 max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle>Account Settings</CardTitle>
         <CardDescription>Manage your account preferences</CardDescription>

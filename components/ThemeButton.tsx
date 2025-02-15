@@ -9,7 +9,16 @@ import { Button } from "@/components/ui/button"
 export default function ThemeButton() {
   const { systemTheme,theme,setTheme } = useTheme()
   React.useEffect(() => {
-    systemTheme?setTheme(systemTheme):setTheme("dark")
+    let theme =localStorage.getItem("theme");
+    if(theme){
+      setTheme(theme)
+      return
+    }
+    if(systemTheme){
+      setTheme(systemTheme)
+      return
+    }
+    
   },[])
 
   return (

@@ -532,8 +532,8 @@ export default function ResumeBuilder() {
               <SheetTrigger asChild>
                 <Button className="w-full">View Resume</Button>
               </SheetTrigger>
-              <SheetContent side="bottom" className="h-screen w-screen">
-                <div className="bg-secondary dark:bg-card w-full  rounded-lg shadow-lg h-full overflow-auto">
+              <SheetContent side="bottom" className="h-screen w-screen ">
+                <div className="bg-secondary dark:bg-card w-full  rounded-lg shadow-lg h-full overflow-auto py-2 ">
                   {Template && renderTemplate()}
                 </div>
               </SheetContent>

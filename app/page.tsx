@@ -204,7 +204,7 @@ export default function Page() {
               Our Templates
             </motion.h2>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8 container lg:max-w-6xl mx-auto">
-            {!IsLoading
+            {(!IsLoading && TemplateImages!=undefined)
           ? TemplateImages.slice(0, 6)?.map((item) => (
               <motion.div
                 

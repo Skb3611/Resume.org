@@ -89,6 +89,7 @@ export default function UserDashboard() {
         waveSpeed: 1.5, // Speed of wave animation
         zoom: 1, // Zoom level
         backgroundColor: 0x000000,
+        gyroControls: true, 
       });
     }
     return () => {

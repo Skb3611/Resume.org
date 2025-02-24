@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+		screens:{
+			'500px':'500px',
+		},
   		colors: {
 			'template-bg-gray':'rgb(55 66 83) !important',
   			background: 'hsl(var(--background))',

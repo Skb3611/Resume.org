@@ -6,7 +6,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Layout, Zap, Award, Download, Edit, Share2, Link } from 'lucide-react';
+import { Layout, Zap, Award, Download, Edit, Share2 } from 'lucide-react';
+import Link from "next/link";
 import Image from "next/image";
 import { getTemplates } from "@/lib/serveractions";
 import { useEffect, useRef, useState } from "react";
@@ -85,6 +86,7 @@ export default function Page() {
           waveSpeed: 1.5, // Speed of wave animation
           zoom: 1, // Zoom level
           backgroundColor: 0x000000,
+          gyroControls: true, // Disable gyroscope controls
         });
       }
     });
@@ -205,7 +207,7 @@ export default function Page() {
             {!IsLoading
           ? TemplateImages.slice(0, 6)?.map((item) => (
               <motion.div
-              
+                
               onClick={() => Router.push(`/editor?template=${item?.id}`)}
               initial={{ opacity: 0, y: 25 }}
               viewport={{once:true}}
@@ -222,12 +224,13 @@ export default function Page() {
                   className="w-full h-full object-fill transition-transform duration-300 group-hover:scale-105"
                   
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 hidden md:block">
+                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 md:flex flex-col items-center justify-center p-4 hidden">
                   <Button asChild variant="secondary" className="z-10">
-                    <Link href={`/editor?template=${item?.id}`}>
-                      Use This Template
-                    </Link>
-                  </Button>
+                  <Link href={`/editor?template=${item?.id}`}>
+                  Use this Template
+                  </Link>
+                    </Button>
+                 
                 </div>
               </motion.div>
             ))

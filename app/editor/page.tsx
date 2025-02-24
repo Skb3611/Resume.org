@@ -326,6 +326,9 @@ export default function ResumeBuilder() {
     console.log("aaaaaaaaaaaaaaaa")
     try{
       console.log(ref.current)
+      if(printRef.current){
+        handleDownloadPDF(printRef);
+      }
       if (ref.current){
         // Only render if Template is available
         if (Template){
@@ -345,7 +348,6 @@ export default function ResumeBuilder() {
     }catch(error){
       console.error("Error during PDF download:", error);
       
-
     }
   }
   const renderComponent = () => {
@@ -482,29 +484,29 @@ export default function ResumeBuilder() {
                   </ScrollArea>
                   {renderComponent()}
                 </Tabs>
-                <div className="flex justify-between gap-2 lg:gap-0 mt-3">
+                <div className="grid grid-cols-2 lg:grid-cols-4  justify-between gap-2  mt-3">
                   <Button
                     onClick={handlePrev}
-                    className="w-1/5 hidden lg:flex"
+                    className=" hidden lg:flex px-2 xl:px-4"
                     disabled={tabs.indexOf(activeTab) === 0}
                   >
-                    <ArrowLeft className="mr-2" /> 
-                    <span className="hidden md:inline">Previous</span>
+                    <ArrowLeft className="mr-2 h-4 w-4" /> 
+                    <span className="hidden md:inline text-xs xl:text-sm ">Previous</span>
                   </Button>
 
-                  <Button className="w-1/2 lg:w-1/4 flex" onClick={handlesave}>
-                    <Bookmark className="mr-1 mb-1 h-6" />
-                    <span>
+                  <Button className="flex px-2 xl:px-4" onClick={handlesave}>
+                    <Bookmark className="mr-1 mb-1 h-4 w-4" />
+                    <span className="text-xs xl:text-sm">
 
                     Save 
                     </span>
                   </Button>
                   <Button
-                    className="w-1/2 lg:w-1/4 flex"
+                    className="flex px-2 xl:px-4"
                     onClick={handleDownload}
                   >
-                    <Download className="mr-1 mb-1 h-6" />
-                    <span>
+                    <Download className="mr-1 mb-1 h-4 w-4" />
+                    <span className="text-xs xl:text-sm">
                     Download 
                     </span>
                   </Button>
@@ -512,10 +514,10 @@ export default function ResumeBuilder() {
                   <Button
                     onClick={handleNext}
                     disabled={tabs.indexOf(activeTab) === tabs.length - 1}
-                    className="w-1/5 hidden lg:flex"
+                    className=" hidden lg:flex px-2 xl:px-4"
                   >
-                    <span className="hidden md:inline">Next</span>
-                     <ArrowRight className="ml-2" />
+                    <span className="hidden md:inline text-xs xl:text-sm ">Next</span>
+                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
               </Card>
@@ -540,9 +542,8 @@ export default function ResumeBuilder() {
         </div>
         <div
               ref={ref}
-              className="w-[450px] absolute -top-[9999px] -left-[9999px] h-full"
+              className="w-[450px] absolute -top-[9999px] -left-[9999px] h-full lg:hidden"
             >
-              abc
             </div>
       </div>
       

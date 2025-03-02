@@ -22,7 +22,7 @@ const Template=forwardRef(({
 },ref:React.Ref<HTMLDivElement>) => {
   return (
     <div ref={ref} className="w-[90%] min-[500px]:w-[70%] sm:w-[55%] md:w-full lg:w-[90%] mx-auto bg-white text-black shadow-lg py-2 xl:py-4">
-      {/* Header */}
+      {/* Header */}2
       <div className="text-center mb-2 xl:mb-4">
         <h1 className="xl:text-2xl font-bold tracking-wider xl:mb-2">
           {PersonalData?.name || "OLIVIA WILSON"}

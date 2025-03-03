@@ -22,35 +22,35 @@ const Template=forwardRef(({
   CertificationsData:CertificationData[]
 },ref:React.Ref<HTMLDivElement>) => {
   return (
-    <div ref={ref} className="w-full mx-auto bg-white shadow-lg">
+    <div ref={ref} className="w-full min-[425px]:w-[80%] min-[550px]:w-[65%] sm:w-[55%] md:w-full mx-auto bg-white shadow-lg">
       {/* Header */}
-      <div className="p-8 pb-4">
+      <div className="xl:p-8 p-4 pb-4">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-serif text-zinc-800 border-b-2 border-zinc-800 pb-2 mb-2">
+            <h1 className="xl:text-3xl font-serif text-zinc-800 border-b pb-1.5-2 border-zinc-800 xl:pb-2 pb-1 xl:mb-2 mb-1">
               {PersonalInformationData?.name || "ISABEL MERCADO"}
             </h1>
-            <p className="text-lg text-zinc-600 font-serif">
+            <p className="text-xs xl:text-lg text-zinc-600 font-serif">
               {PersonalInformationData?.role || "Executive Secretary"}
             </p>
           </div>
-          <div className="text-right space-y-2 text-sm">
+          <div className="text-right space-y-2 text-xxs xl:text-sm">
             <div className="flex items-center justify-end gap-2 text-zinc-700">
               <span>{PersonalInformationData?.phone || "+123-456-7890"}</span>
-              <Phone className="w-5 h-5" />
+              <Phone className="xl:w-5 w-3 h-3  xl:h-5 " />
             </div>
             <div className="flex items-center justify-end gap-2 text-zinc-700">
               <span>
                 {PersonalInformationData?.email || "hello@reallygreatsite.com"}
               </span>
-              <Mail className="w-5 h-5" />
+              <Mail className="xl:w-5 w-3 h-3  xl:h-5 " />
             </div>
             <div className="flex items-center justify-end gap-2 text-zinc-700">
               <span>
                 {PersonalInformationData?.address ||
                   "123 Anywhere St., Any City"}
               </span>
-              <Home className="w-5 h-5" />
+              <Home className="xl:w-5  w-3 h-3 xl:h-5 " />
             </div>
           </div>
         </div>
@@ -59,25 +59,25 @@ const Template=forwardRef(({
       <div className="w-full h-1 bg-zinc-800" />
 
       {/* Summary */}
-      <div className="px-8 py-6">
-        <h2 className="text-2xl font-serif text-center text-zinc-800 mb-4">
+      <div className="xl:px-8 xl:py-6 px-4 py-3">
+        <h2 className="text-base xl:text-2xl font-serif text-center text-zinc-800 xl:mb-4 mb-2">
           SUMMARY
         </h2>
-        <p className="text-zinc-600  max-w-4xl mx-auto text-sm text-justify">
+        <p className="text-zinc-600  max-w-4xl mx-auto text-xxs xl:text-sm text-justify">
           {PersonalInformationData?.aboutme ||
             "Highly motivated and professional Executive Secretary with over 7 years of experience providing high-level support to senior executives. Proficient in managing calendars, organizing meetings and events, handling confidential documents, and communicating with internal and external stakeholders. Possess exceptional communication and interpersonal skills with a proven ability to work independently and as part of a team."}
         </p>
       </div>
 
-      <div className="grid md:grid-cols-[1fr_1px_1.2fr] gap-8 p-8">
-        {/* Left Column */}
+      <div className="grid grid-cols-[1fr_1px_1.5fr] xl:gap-8 gap-2 xl:p-8 p-4 xl:pt-3">
+      {/* Left Column */}
         <div className="space-y-8">
           {/* Education */}
           <section>
-            <h2 className="text-lg font-serif text-zinc-800 mb-4 border-b border-zinc-300">
+            <h2 className="text-sm xl:text-lg font-serif text-zinc-800 xl:mb-4 mb-2 border-b pb-1.5 border-zinc-300">
               EDUCATION
             </h2>
-            <div className="space-y-4 text-sm">
+            <div className="space-y-4 text-xxs xl:text-sm">
               {EducationData && EducationData[0].degree ? (
                 EducationData.map((item, index) => (
                   <div key={index}>
@@ -87,7 +87,7 @@ const Template=forwardRef(({
 
                     <p className="text-zinc-600">Degree: {item.degree}</p>
                     <p className="text-zinc-500 ">Location: {item.location}</p>
-                    <p className="text-zinc-500 text-sm">
+                    <p className="text-zinc-500 text-xxs xl:text-sm">
                       {item.date
                         ? new Date(item.date).toLocaleDateString("en-US", {
                             year: "numeric", // Include the year
@@ -106,7 +106,7 @@ const Template=forwardRef(({
                     <p className="text-zinc-600">
                       Bachelor's Degree in Business Administration
                     </p>
-                    <p className="text-zinc-500 text-sm">2016 - 2020</p>
+                    <p className="text-zinc-500 text-xxs xl:text-sm">2016 - 2020</p>
                   </div>
                   <div>
                     <h3 className="font-semibold text-zinc-800">
@@ -115,7 +115,7 @@ const Template=forwardRef(({
                     <p className="text-zinc-600">
                       Business Administration on Executive Assistance
                     </p>
-                    <p className="text-zinc-500 text-sm">2020 - 2022</p>
+                    <p className="text-zinc-500 text-xxs xl:text-sm">2020 - 2022</p>
                   </div>
                 </>
               )}
@@ -124,10 +124,10 @@ const Template=forwardRef(({
 
           {/* Skills */}
           <section>
-            <h2 className="text-lg font-serif text-zinc-800 mb-4 border-b border-zinc-300">
+            <h2 className="text-sm xl:text-lg font-serif text-zinc-800 xl:mb-4 mb-2 border-b pb-1.5 border-zinc-300">
               SKILLS
             </h2>
-            <ul className="list-disc list-inside text-sm space-y-2 text-zinc-600">
+            <ul className="list-disc list-inside text-xxs xl:text-sm space-y-2 text-zinc-600">
               {SkillsData && SkillsData[0].data ? (
                 SkillsData.map((item, index) => (
                   <li key={index}>{item.data}</li>
@@ -137,14 +137,14 @@ const Template=forwardRef(({
                   <li>Strong organizational and time-management skills</li>
                   <li>Exceptional communication and interpersonal skills</li>
                   <li>Ability to work independently and as part of a team</li>
-                  <li>
+                  {/* <li>
                     Detail-oriented and able to handle multiple tasks
                     simultaneously
                   </li>
                   <li>
                     Experience in managing budgets and handling financial
                     documents
-                  </li>
+                  </li> */}
                 </>
               )}
             </ul>
@@ -152,11 +152,11 @@ const Template=forwardRef(({
 
           {/* Certifications */}
           <section>
-            <h2 className="text-lg font-serif text-zinc-800 mb-4 border-b border-zinc-300">
+            <h2 className="text-sm xl:text-lg font-serif text-zinc-800 xl:mb-4 mb-2 border-b pb-1.5 border-zinc-300">
               CERTIFICATIONS
             </h2>
             <div>
-              <div className="text-zinc-600 text-sm space-y-2">
+              <div className="text-zinc-600 text-xxs xl:text-sm space-y-2">
                 {CertificationsData && CertificationsData[0].company ?
                 CertificationsData.map((item, index) => (
                   <div key={index}>
@@ -189,14 +189,14 @@ const Template=forwardRef(({
         </div>
 
         {/* Vertical Divider */}
-        <div className="hidden md:block w-px bg-zinc-200" />
+        <div className=" w-px bg-zinc-200" />
 
         {/* Right Column - Professional Experience */}
         <div>
-          <h2 className="text-lg font-serif text-zinc-800 mb-4 border-b border-zinc-300">
+          <h2 className="text-sm xl:text-lg font-serif text-zinc-800 xl:mb-4 mb-2 border-b pb-1.5 border-zinc-300">
             PROFESSIONAL EXPERIENCE
           </h2>
-          <div className="space-y-6 text-sm">
+          <div className="space-y-6 text-xxs xl:text-sm">
             {ExperienceData && ExperienceData[0].company ? (
               ExperienceData.map((item, index) => (
                 <div key={index} className="mb-6">
@@ -266,7 +266,7 @@ const Template=forwardRef(({
                     </li>
                   </ul>
                 </div>
-                <div>
+                {/* <div>
                   <h3 className="font-semibold text-zinc-800">
                     Executive Secretary Intern
                   </h3>
@@ -288,7 +288,7 @@ const Template=forwardRef(({
                       calls, responding to emails, and preparing correspondence
                     </li>
                   </ul>
-                </div>
+                </div> */}
               </>
             )}
           </div>

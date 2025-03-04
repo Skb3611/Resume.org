@@ -30,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 interface Data {
@@ -51,17 +51,18 @@ const Connection = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   let token;
   const searchParams = useSearchParams();
+  console.log(searchParams)
   const error = searchParams.get('error');
   useEffect(() => {
     (async () => {
       
       if (error === 'OAuthAccountNotLinked') {
-        toast.error("This email is already linked with another provider.", toastoptions);
+        !searchParams.has("template") && toast.error("This email is already linked with another provider.", toastoptions);
         router.push("/")
         return;
       }
       if(error === 'NotLoggedIn'){
-        toast.error("Please login to continue", toastoptions);
+        !searchParams.has("template") && toast.error("Please login to continue", toastoptions);
         router.push("/")
         return;
       }
@@ -72,11 +73,11 @@ const Connection = () => {
         check
           ? (async () => {
               if (check.exp && check.exp < new Date().getTime() / 1000) {
-                toast.error("Invalid Token.Try again", toastoptions);
+                !searchParams.has("template") && toast.error("Invalid Token.Try again", toastoptions);
                 await clearCookies();
                 return;
               }
-              toast.success("Logged in successfully", toastoptions);
+              !searchParams.has("template") && toast.success("Logged in successfully", toastoptions);
               setdecoded(check);
               localStorage.setItem("custom_user", JSON.stringify(check) ?? "");
             })()

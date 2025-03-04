@@ -8,13 +8,13 @@ import type {
 import { forwardRef } from "react";
 
 const Template=forwardRef(({
-  PersonalData,
+  PersonalInformationData,
   EducationData,
   SkillsData,
   ExperienceData,
   ProjectsData,
 }: {
-  PersonalData: PersonalData;
+  PersonalInformationData: PersonalData;
   EducationData: EducationData[];
   SkillsData: SkillsData[];
   ExperienceData: ExperienceData[];
@@ -22,17 +22,17 @@ const Template=forwardRef(({
 },ref:React.Ref<HTMLDivElement>) => {
   return (
     <div ref={ref} className="w-[90%] min-[500px]:w-[70%] sm:w-[55%] md:w-full lg:w-[90%] mx-auto bg-white text-black shadow-lg py-2 xl:py-4">
-      {/* Header */}2
+      {/* Header */}
       <div className="text-center mb-2 xl:mb-4">
         <h1 className="xl:text-2xl font-bold tracking-wider xl:mb-2">
-          {PersonalData?.name || "OLIVIA WILSON"}
+          {PersonalInformationData?.name || "OLIVIA WILSON"}
         </h1>
         <p className="text-xxs xl:text-sm font-semibold tracking-wide mb-1">
-          {PersonalData?.role || "SOFTWARE ENGINEER"}
+          {PersonalInformationData?.role || "SOFTWARE ENGINEER"}
         </p>
         <p className="text-gray-600 mb-1 text-xxs xl:text-sm">
-          {PersonalData?.address || "Address"} | {PersonalData?.email || "Mail"}{" "}
-          {/* {PersonalData?.website || "Website"} */}
+          {PersonalInformationData?.address || "Address"} | {PersonalInformationData?.email || "Mail"}{" "}
+          {/* {PersonalInformationData?.website || "Website"} */}
         </p>
       </div>
 

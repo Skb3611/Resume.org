@@ -51,7 +51,6 @@ const Connection = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   let token;
   const searchParams = useSearchParams();
-  console.log(searchParams)
   const error = searchParams.get('error');
   useEffect(() => {
     (async () => {

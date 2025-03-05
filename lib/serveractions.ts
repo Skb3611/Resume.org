@@ -1,7 +1,10 @@
 "use server";
+import React from "react";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import bcrypt from "bcryptjs";
-
+import nodemailer from "nodemailer"
+import {render} from "@react-email/components"
+import ForgotPasswordEmail from "@/components/ForgetEmail";
 const s3 = new S3Client({
   credentials: {
     accessKeyId: process.env.ACCESS_KEY_ID ?? "",
@@ -243,3 +246,4 @@ export async function clearCookies() {
   const cookiestore = cookies();
   cookiestore.delete("token");
 }
+

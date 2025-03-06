@@ -261,7 +261,7 @@ export default function UserDashboard() {
               ref={componentRef}
               className="header h-[30dvh] md:h-[40dvh] bg-white relative"
             >
-              <Avatar className="w-32 h-32 md:w-52 md:h-52 rounded-full absolute -bottom-16 md:-bottom-24 left-4 md:left-8 object-cover outline-foreground outline outline-offset-1 bg-black bg-background">
+              <Avatar className="w-32 h-32 md:w-52 md:h-52 2xl:h-60 2xl:w-60 rounded-full absolute -bottom-16 md:-bottom-24 left-4 md:left-8 2xl:left-44 object-cover outline-foreground outline outline-offset-1 bg-black bg-background">
                 <AvatarImage
                   src={getLargerProfileImage(user?.image, 400)}
                   alt="user-image"
@@ -276,7 +276,7 @@ export default function UserDashboard() {
                 </AvatarFallback>
               </Avatar>
             </div>
-            <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
+            <div className="max-w-6xl 2xl:max-w-[80%] mx-auto sm:px-6 lg:px-8">
               <div className="info mt-20 md:mt-28 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                 <div className="w-full md:w-1/2">
                   <h1 className="text-2xl md:text-3xl font-semibold w-full">
@@ -395,7 +395,7 @@ export default function UserDashboard() {
         );
       case "settings":
         return (
-          <div className="max-w-6xl mx-auto md:px-4 sm:px-6 lg:px-8 my-5">
+          <div className="max-w-6xl mx-auto md:px-4 sm:px-6 lg:px-8 my-5 flex justify-center items-center">
             <UserSettings />
           </div>
         );
@@ -406,7 +406,7 @@ export default function UserDashboard() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-background">
-      <aside className="hidden lg:flex w-56 flex-shrink-0 bg-background border-r">
+      <aside className="hidden lg:flex w-56 2xl:w-64 flex-shrink-0 bg-background border-r">
         <nav className="flex-1 space-y-3 p-4">
           <Button
             variant={activeTab === "home" ? "default" : "ghost"}
@@ -521,7 +521,7 @@ export default function UserDashboard() {
               </div>
             </div>
           </header>
-          <div className="max-w-3xl md:max-w-6xl xl:max-w-7xl mx-auto">
+          <div className="max-w-3xl md:max-w-6xl xl:max-w-7xl 2xl:max-w-full mx-auto min-h-screen">
             {renderContent()}
           </div>
         </ScrollArea>

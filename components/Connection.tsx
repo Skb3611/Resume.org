@@ -33,6 +33,7 @@ import Image from "next/image";
 import { LogOut, User } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Session } from "next-auth";
 
 interface Data {
   email: string;
@@ -54,7 +55,7 @@ const Connection = () => {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
   useEffect(() => {
-    (async () => {
+    const timeout = setTimeout(async () => {
       if (error === "OAuthAccountNotLinked") {
         !searchParams.has("template") &&
           toast.error(
@@ -64,33 +65,36 @@ const Connection = () => {
         router.push("/");
         return;
       }
+  
       if (error === "NotLoggedIn") {
         !searchParams.has("template") &&
           toast.error("Please login to continue", toastoptions);
         router.push("/");
         return;
       }
-      token = await getCookies();
+  
+      const token = await getCookies();
       if (token) {
         let check = decodeToken(token?.value ?? "") as JwtPayload;
-
-        check
-          ? (async () => {
-              if (check.exp && check.exp < new Date().getTime() / 1000) {
-                !searchParams.has("template") &&
-                  toast.error("Invalid Token.Try again", toastoptions);
-                await clearCookies();
-                return;
-              }
-              !searchParams.has("template") &&
-                toast.success("Logged in successfully", toastoptions);
-              setdecoded(check);
-              localStorage.setItem("custom_user", JSON.stringify(check) ?? "");
-            })()
-          : toast.error("Invalid Token.Try again", toastoptions);
+  
+        if (check && check.exp && check.exp < new Date().getTime() / 1000) {
+          !searchParams.has("template") &&
+            toast.error("Invalid Token. Try again", toastoptions);
+          await clearCookies();
+          return;
+        }
+  
+        !searchParams.has("template") &&
+          toast.success("Logged in successfully", toastoptions);
+        setdecoded(check);
+        localStorage.setItem("custom_user", JSON.stringify(check) ?? "");
       }
-    })();
+    }, 500); // Delay execution
+  
+    return () => clearTimeout(timeout); // Cleanup on re-run
   }, [session, error]);
+  
+  
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,15 +183,8 @@ const Connection = () => {
           <Button variant={"link"} size={"icon"} className="p-0">
             <DropdownMenu>
               <DropdownMenuTrigger>
-                {session ? (
-                  // <img
-                  //   height={100}
-                  //   width={100}
-                  //   src={session.user?.image ?? ""}
-                  //   alt="avatar"
-                  //   className="w-full h-full rounded-full"
-                  //   loading="lazy"
-                  // />
+                {
+                session && (
                   <Avatar>
                     <AvatarImage
                       src={getLargerProfileImage(
@@ -203,11 +200,12 @@ const Connection = () => {
                         .toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                ) : (
+                )}
+                 {decoded && (
                   <Avatar>
                     <AvatarImage
                       src={getLargerProfileImage(
-                        decoded.user?.image ?? "",
+                        decoded?.image ?? "",
                         400
                       )}
                     />

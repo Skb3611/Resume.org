@@ -65,16 +65,24 @@ const ForgotPassword = () => {
 
   return (
     <div className="min-h-[80dvh] flex flex-col items-center justify-center p-4 md:p-8">
-      <div className="w-full max-w-md mx-auto mb-8">
+      <motion.div 
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2,duration:0.5 }}
+      className="w-full max-w-md mx-auto mb-8">
         <Link href="/" className="inline-block">
           <Button variant="ghost" size="sm" className="gap-1">
             <ArrowLeft className="h-4 w-4" />
             Back to home
           </Button>
         </Link>
-      </div>
+      </motion.div>
 
-      <div className="w-full max-w-md">
+      <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.4,duration:0.5 }}
+      className="w-full max-w-md">
         <form onSubmit={handleSubmit}>
           <Card className="w-full max-w-md mx-auto glass-card animate-fade-in">
             <CardHeader className="space-y-1">
@@ -121,7 +129,7 @@ const ForgotPassword = () => {
             </CardFooter>
           </Card>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };

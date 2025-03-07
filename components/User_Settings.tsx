@@ -16,7 +16,7 @@ import { User, Mail, Lock, Camera } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { set } from "date-fns";
 import { clearCookies, updateUserDetails, updateUserPassword } from "@/lib/serveractions";
-import { toastoptions } from "@/lib/utils";
+import { getLargerProfileImage, toastoptions } from "@/lib/utils";
 import { toast } from "react-toastify";
 import { strict } from "assert";
 import { decodeToken } from "@/lib/jwt";
@@ -132,7 +132,14 @@ export default function AccountSettings() {
               <div className="flex flex-col items-center space-y-4">
                 <div className="relative group">
                   <Avatar className="h-24 w-24 cursor-pointer">
-                    <AvatarImage src={user?.image} alt="User" />
+                    <AvatarImage src={
+                      (()=>{
+                        if(user?.image.includes(process.env.NEXT_PUBLIC_API_URL!)){
+                          return getLargerProfileImage(user?.image)
+                        }
+                        else return user?.image 
+                      })()
+                    } alt="User" />
                     <AvatarFallback>
                       {user?.name
                         .split(" ")

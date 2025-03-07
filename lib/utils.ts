@@ -18,7 +18,7 @@ export const toastoptions = {
   progress: undefined,
   theme: "dark",
 };
-export function getLargerProfileImage(url: string, size: number = 400) {
+export function getLargerProfileImage(url: string, size: number = 400){
   if (url) {
     if (url.includes("googleusercontent.com")) {
       // Google: Replace `s96-c` or similar with `s<size>-c`
@@ -36,7 +36,7 @@ export function getLargerProfileImage(url: string, size: number = 400) {
       }
       return urlObj.toString();
     }
-    return url; // If no matching platform, return the original URL
+    return `${url}?t=${Date.now()}`; // If no matching platform, return the original URL
   }
 }
 export const handleDownloadPDF = async (printRef: any) => {

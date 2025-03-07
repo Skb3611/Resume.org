@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Layout, Zap, Award, Download, Edit, Share2 } from 'lucide-react';
+import { Layout, Zap, Award, Download, Edit, Share2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { getTemplates } from "@/lib/serveractions";
@@ -124,18 +124,18 @@ export default function Page() {
               <div>
                 <motion.h1
                   initial={{ opacity: 0, y: 25 }}
-                  viewport={{once:true}}
+                  viewport={{ once: true }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
                   className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tighter mb-3 sm:mb-5 text-white"
                 >
                   Create Your Perfect Resume in Minutes
                 </motion.h1>
                 <motion.p
                   initial={{ opacity: 0, y: 25 }}
-                  viewport={{once:true}}
+                  viewport={{ once: true }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
                   className="mx-auto max-w-[700px] text-white text-sm sm:text-base md:text-lg xl:text-xl"
                 >
                   Build a professional resume that stands out with our
@@ -144,9 +144,9 @@ export default function Page() {
               </div>
               <motion.div
                 initial={{ opacity: 0, y: 25 }}
-                viewport={{once:true}}
+                viewport={{ once: true }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
+                transition={{ duration: 0.5, delay: 1 }}
                 className="space-y-2 sm:space-y-0 sm:space-x-4 my-1 flex flex-col items-center justify-center sm:flex-row"
               >
                 <Button
@@ -170,11 +170,14 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="w-full py-8 sm:py-12 md:py-16 lg:py-24" id="features">
+        <section
+          className="w-full py-8 sm:py-12 md:py-16 lg:py-24"
+          id="features"
+        >
           <div className="container mx-auto px-4 md:px-6">
             <motion.h2
               initial={{ opacity: 0, y: 25 }}
-              viewport={{once:true}}
+              viewport={{ once: true }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-center mb-8 sm:mb-12"
@@ -196,7 +199,7 @@ export default function Page() {
           <div className="container mx-auto px-4 md:px-6">
             <motion.h2
               initial={{ opacity: 0, y: 25 }}
-              viewport={{once:true}}
+              viewport={{ once: true }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-center mb-8 sm:mb-12"
@@ -204,50 +207,48 @@ export default function Page() {
               Our Templates
             </motion.h2>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8 container lg:max-w-6xl mx-auto">
-            {(!IsLoading && TemplateImages!=undefined)
-          ? TemplateImages.slice(0, 6)?.map((item) => (
-              <motion.div
-                
-              onClick={() => Router.push(`/editor?template=${item?.id}`)}
-              initial={{ opacity: 0, y: 25 }}
-              viewport={{once:true}}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-
-                key={item.id}
-                className="group relative aspect-[3/4] overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-xl"
-              >
-                <Image
-                  fill
-                  src={item?.thumbnail ?? ""}
-                  alt={`${item?.id} template`}
-                  className="w-full h-full object-fill transition-transform duration-300 group-hover:scale-105"
-                  
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 md:flex flex-col items-center justify-center p-4 hidden">
-                  <Button asChild variant="secondary" className="z-10">
-                  <Link href={`/editor?template=${item?.id}`}>
-                  Use this Template
-                  </Link>
-                    </Button>
-                 
-                </div>
-              </motion.div>
-            ))
-          : Array(6)
-              .fill(0)
-              .map((_, index) => (
-                <motion.div
-                initial={{ opacity: 0, y: 25 }}
-                viewport={{once:true}}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                  key={index}
-                  className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md"
-                >
-                  <Skeleton className="w-full h-full object-cover bg-foreground/10" />
-                </motion.div>
-              ))}
+              {!IsLoading && TemplateImages != undefined
+                ? TemplateImages.slice(0, 6)?.map((item, index) => (
+                    <motion.div
+                      onClick={() =>
+                        Router.push(`/editor?template=${item?.id}`)
+                      }
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: index * 0.2 }}
+                      key={item.id}
+                      className="group relative aspect-[3/4] overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-xl"
+                    >
+                      <Image
+                        fill
+                        src={item?.thumbnail ?? ""}
+                        alt={`${item?.id} template`}
+                        className="w-full h-full object-fill transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 md:flex flex-col items-center justify-center p-4 hidden">
+                        <Button asChild variant="secondary" className="z-10">
+                          <Link href={`/editor?template=${item?.id}`}>
+                            Use this Template
+                          </Link>
+                        </Button>
+                      </div>
+                    </motion.div>
+                  ))
+                : Array(6)
+                    .fill(0)
+                    .map((_, index) => (
+                      <motion.div
+                         initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: index * 0.2 }}
+                        key={index}
+                        className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md"
+                      >
+                        <Skeleton className="w-full h-full object-cover bg-foreground/10" />
+                      </motion.div>
+                    ))}
             </div>
             <div className="mt-8 sm:mt-12 text-center">
               <Button
@@ -326,7 +327,7 @@ export default function Page() {
               <div className="space-y-2">
                 <motion.h2
                   initial={{ opacity: 0, y: 25 }}
-                  viewport={{once:true}}
+                  viewport={{ once: true }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter"
@@ -335,7 +336,7 @@ export default function Page() {
                 </motion.h2>
                 <motion.p
                   initial={{ opacity: 0, y: 25 }}
-                  viewport={{once:true}}
+                  viewport={{ once: true }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.5 }}
                   className="mx-auto max-w-[600px] text-primary-foreground/80 text-sm sm:text-base md:text-lg"
@@ -346,7 +347,7 @@ export default function Page() {
               </div>
               <motion.div
                 initial={{ opacity: 0, y: 25 }}
-                viewport={{once:true}}
+                viewport={{ once: true }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
                 className="w-full max-w-sm space-y-2"
@@ -393,14 +394,16 @@ function FeatureCard({ icon: Icon, title, description, index }: FeatureProps) {
     <motion.div
       className="flex flex-col items-center text-center"
       initial="offscreen"
-      viewport={{once:true}}
+      viewport={{ once: true }}
       whileInView="onscreen"
       variants={featureVariants}
       custom={index}
     >
       <Icon className="h-10 w-10 sm:h-12 sm:w-12 mb-4 text-primary" />
       <h3 className="text-lg sm:text-xl font-bold mb-2">{title}</h3>
-      <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">{description}</p>
+      <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
+        {description}
+      </p>
     </motion.div>
   );
 }
@@ -416,8 +419,8 @@ const featureVariants: Variants = {
     transition: {
       type: "spring",
       bounce: 0.4,
-      duration: 0.8,
-      delay: index * 0.1,
+      duration: 0.5,
+      delay: index * 0.2,
     },
   }),
 };

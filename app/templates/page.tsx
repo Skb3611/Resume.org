@@ -117,7 +117,7 @@ export default function TemplatesPage() {
         className="grid grid-cols-2  lg:grid-cols-3 gap-3 md:gap-8 container lg:max-w-6xl mx-auto"
       >
         {!isLoading
-          ? Templates.map((item) => (
+          && Templates.map((item) => (
               <motion.div
               onClick={()=>router.push(`/editor?template=${item.id}`)}
                 key={item.id}
@@ -139,19 +139,8 @@ export default function TemplatesPage() {
                 </div>
               </motion.div>
             ))
-          : Array(6)
-              .fill(0)
-              .map((_, index) => (
-                <motion.div
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  key={index}
-                  className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md"
-                >
-                  <Skeleton className="w-full h-full object-cover bg-foreground/10" />
-                </motion.div>
-              ))}
+          
+              }
       </motion.div>
     </div>
   );

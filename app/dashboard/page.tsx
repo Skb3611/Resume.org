@@ -43,26 +43,7 @@ import ReactDOM from "react-dom/client";
 import TemplatesPage from "../templates/page";
 import UserSettings from "@/components/User_Settings";
 import { getUserTemplates } from "@/lib/serveractions";
-
-const resumeTemplates = [
-  { id: "professional", name: "Professional" },
-  { id: "creative", name: "Creative" },
-  { id: "simple", name: "Simple" },
-  { id: "modern", name: "Modern" },
-];
-
-const savedResumes = [
-  { id: 1, name: "Software Engineer Resume", lastEdited: "2 days ago" },
-  { id: 2, name: "Product Manager Resume", lastEdited: "1 week ago" },
-  { id: 3, name: "Data Analyst Resume", lastEdited: "3 weeks ago" },
-];
-
-const historyLog = [
-  { action: "Edited Software Engineer Resume", timestamp: "2 days ago" },
-  { action: "Changed template to Modern", timestamp: "1 week ago" },
-  { action: "Downloaded Product Manager Resume", timestamp: "2 weeks ago" },
-  { action: "Created Data Analyst Resume", timestamp: "3 weeks ago" },
-];
+import {motion} from "framer-motion"
 
 export default function UserDashboard() {
   const { data: session } = useSession();
@@ -257,11 +238,14 @@ export default function UserDashboard() {
       case "profile":
         return (
           <section className="space-y-6">
-            <div
+            <motion.div
+            initial={{opacity:0,x:-20}}
+            animate={{opacity:1,x:0}}
+            transition={{duration:0.5}}
               ref={componentRef}
               className="header h-[30dvh] md:h-[40dvh] bg-white relative"
             >
-              <Avatar className="w-32 h-32 md:w-52 md:h-52 2xl:h-60 2xl:w-60 rounded-full absolute -bottom-16 md:-bottom-24 left-4 md:left-8 2xl:left-44 object-cover outline-foreground outline outline-offset-1 bg-black bg-background">
+              <Avatar className="w-32 h-32 md:w-52 md:h-52 2xl:h-60 2xl:w-60 rounded-full absolute -bottom-16 md:-bottom-24 left-4 md:left-8 2xl:left-40 object-cover outline-foreground outline outline-offset-1 bg-black bg-background">
                 <AvatarImage
                   src={getLargerProfileImage(user?.image, 400)}
                   alt="user-image"
@@ -275,20 +259,31 @@ export default function UserDashboard() {
                     .toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-            </div>
+            </motion.div>
             <div className="max-w-6xl 2xl:max-w-[80%] mx-auto sm:px-6 lg:px-8">
               <div className="info mt-20 md:mt-28 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                 <div className="w-full md:w-1/2">
-                  <h1 className="text-2xl md:text-3xl font-semibold w-full">
                     {!isLoading ? (
-                      user?.name
+                      <motion.h1
+                      initial={{opacity:0,y:20}}
+                      animate={{opacity:1,y:0}}
+                      transition={{duration:0.5}}
+                      className="text-2xl md:text-3xl font-semibold w-full">
+                      {user?.name}
+                      </motion.h1>
                     ) : (
                       <Skeleton className="w-2/4 h-8 rounded-md bg-muted my-2" />
                     )}
-                  </h1>
                   <div className="text-base md:text-lg text-muted-foreground">
                     {!isLoading ? (
-                      user?.email ?? "No email"
+                      <motion.h2
+                      initial={{opacity:0,y:20}}
+                      animate={{opacity:1,y:0}}
+                      transition={{delay:0.2,duration:0.5}}
+                      >
+
+                      {user?.email ?? "No email"}
+                      </motion.h2>
                     ) : (
                       <Skeleton className="w-3/4 h-5 rounded-md bg-muted my-2" />
                     )}
@@ -329,10 +324,20 @@ export default function UserDashboard() {
                   </CardHeader>
                   <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {!isLoading && Templates.length == 0 ? (
-                      <div key="NoResumes">No resumes</div>
+                      <motion.div
+                      initial={{opacity:0,y:20}}
+                      animate={{opacity:1,y:0}}
+                      transition={{duration:0.5}}
+                      key="NoResumes">No resumes</motion.div>
                     ) : (
-                      Templates.map((item: any) => {
+                      Templates.map((item: any,index:number) => {
                         return (
+                          <motion.div
+                          initial={{opacity:0,y:20}}
+                      whileInView={{opacity:1,y:0}}
+                    viewport={{once:true}}
+                      transition={{duration:0.5,delay:0.05*index}}
+                          >
                           <Card key={item.id} className="p-4 h-[60dvh]">
                             <CardContent className="relative h-[40vh] ">
                               <Image
@@ -377,6 +382,7 @@ export default function UserDashboard() {
                               </div>
                             </CardFooter>
                           </Card>
+                          </motion.div>
                         );
                       })
                     )}

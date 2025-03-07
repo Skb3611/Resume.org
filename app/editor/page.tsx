@@ -1,5 +1,5 @@
 "use client";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 export const dynamic = "force-dynamic";
 import { Button } from "@/components/ui/button";
 import PersonalDetails from "@/components/TemplateComponents/PersonalDetails";
@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { handleDownloadPDF, toastoptions } from "@/lib/utils";
 import { toast } from "react-toastify";
+import {motion} from "framer-motion";
 export interface PersonalData {
   name: string;
   role: string;
@@ -82,7 +83,7 @@ export interface ReferencesData {
 }
 
 export default function ResumeBuilder() {
-  let root: ReactDOM.Root | null = null
+  let root: ReactDOM.Root | null = null;
   const printRef = useRef<HTMLDivElement>(null);
   const ref = useRef<HTMLDivElement>(null);
   const [Template, setTemplate] = useState<React.FC<any> | null>(null);
@@ -170,7 +171,7 @@ export default function ResumeBuilder() {
   useEffect(() => {
     (async () => {
       // console.log(session, status);
-      let custom_user = JSON.parse(localStorage.getItem("custom_user")??"{}");
+      let custom_user = JSON.parse(localStorage.getItem("custom_user") ?? "{}");
       if (status === "authenticated" || custom_user) {
         let isTemplateCreated = await createTemplate(
           parseInt(params.get("template") as string),
@@ -183,7 +184,7 @@ export default function ResumeBuilder() {
             (session?.user as { id?: string })?.id ?? custom_user?.id ?? ""
           );
           // console.log(data);
-          if(data?.data && Object.keys(data.data).length !== 0){
+          if (data?.data && Object.keys(data.data).length !== 0) {
             localStorage.setItem("resume", JSON.stringify(data?.data));
           }
         }
@@ -222,7 +223,6 @@ export default function ResumeBuilder() {
     func();
   }, []);
 
-
   let handlesave = async () => {
     setfinaldata({
       ...personaldata,
@@ -256,11 +256,16 @@ export default function ResumeBuilder() {
       (session?.user as { id?: string }).id ?? "",
       finaldata
     );
-    if(bool) toast.promise(bool,{
-      pending:'Saving...',
-      success:'Saved successfully',
-      error:'Error saving'
-    },toastoptions)
+    if (bool)
+      toast.promise(
+        bool,
+        {
+          pending: "Saving...",
+          success: "Saved successfully",
+          error: "Error saving",
+        },
+        toastoptions
+      );
   };
 
   const [activeTab, setActiveTab] = useState<string>("PersonalInformation");
@@ -320,18 +325,18 @@ export default function ResumeBuilder() {
     );
 
     return Template && <Template ref={printRef} {...filteredProps} />;
-  }
+  };
 
   const handleDownload = () => {
-    console.log("aaaaaaaaaaaaaaaa")
-    try{
-      console.log(ref.current)
-      if(printRef.current){
+    console.log("aaaaaaaaaaaaaaaa");
+    try {
+      console.log(ref.current);
+      if (printRef.current) {
         handleDownloadPDF(printRef);
       }
-      if (ref.current){
+      if (ref.current) {
         // Only render if Template is available
-        if (Template){
+        if (Template) {
           // Create root if it doesn't exist
           if (!root) {
             root = ReactDOM.createRoot(ref.current); // Create root for the container
@@ -345,11 +350,10 @@ export default function ResumeBuilder() {
           }, 500); // 500ms for worst-case rendering time
         }
       }
-    }catch(error){
+    } catch (error) {
       console.error("Error during PDF download:", error);
-      
     }
-  }
+  };
   const renderComponent = () => {
     return tabs.map((tab) => {
       switch (tab) {
@@ -462,7 +466,11 @@ export default function ResumeBuilder() {
     !isLoading && (
       <div className="container mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4 ">
+          <motion.div
+          initial={{opacity:0,x:-50}}
+          animate={{opacity:1,x:0}}
+          transition={{duration:0.5}}
+          className="space-y-4 ">
             <div className="min-h-[87vh] ">
               <Card className="md:p-6 p-4 min-h-[87vh] flex flex-col justify-between">
                 <Tabs value={activeTab} onValueChange={handleTabChange}>
@@ -490,25 +498,22 @@ export default function ResumeBuilder() {
                     className=" hidden lg:flex px-2 xl:px-4"
                     disabled={tabs.indexOf(activeTab) === 0}
                   >
-                    <ArrowLeft className="mr-2 h-4 w-4" /> 
-                    <span className="hidden md:inline text-xs xl:text-sm ">Previous</span>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    <span className="hidden md:inline text-xs xl:text-sm ">
+                      Previous
+                    </span>
                   </Button>
 
                   <Button className="flex px-2 xl:px-4" onClick={handlesave}>
                     <Bookmark className="mr-1 mb-1 h-4 w-4" />
-                    <span className="text-xs xl:text-sm">
-
-                    Save 
-                    </span>
+                    <span className="text-xs xl:text-sm">Save</span>
                   </Button>
                   <Button
                     className="flex px-2 xl:px-4"
                     onClick={handleDownload}
                   >
                     <Download className="mr-1 mb-1 h-4 w-4" />
-                    <span className="text-xs xl:text-sm">
-                    Download 
-                    </span>
+                    <span className="text-xs xl:text-sm">Download</span>
                   </Button>
 
                   <Button
@@ -516,17 +521,22 @@ export default function ResumeBuilder() {
                     disabled={tabs.indexOf(activeTab) === tabs.length - 1}
                     className=" hidden lg:flex px-2 xl:px-4"
                   >
-                    <span className="hidden md:inline text-xs xl:text-sm ">Next</span>
-                     <ArrowRight className="ml-2 h-4 w-4" />
+                    <span className="hidden md:inline text-xs xl:text-sm ">
+                      Next
+                    </span>
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
               </Card>
             </div>
-          </div>
-          <div className="bg-secondary dark:bg-card w-full p-4 rounded-lg shadow-lg md:block hidden  ">
-            {Template && renderTemplate()
-              }
-          </div>
+          </motion.div>
+          <motion.div
+          initial={{opacity:0,x:50}}
+          animate={{opacity:1,x:0}}
+          transition={{duration:0.5}}
+          className="bg-secondary dark:bg-card w-full p-4 rounded-lg shadow-lg md:block hidden  ">
+            {Template && renderTemplate()}
+          </motion.div>
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
@@ -541,12 +551,10 @@ export default function ResumeBuilder() {
           </div>
         </div>
         <div
-              ref={ref}
-              className="w-[450px] absolute -top-[9999px] -left-[9999px] h-full lg:hidden"
-            >
-            </div>
+          ref={ref}
+          className="w-[450px] absolute -top-[9999px] -left-[9999px] h-full lg:hidden"
+        ></div>
       </div>
-      
     )
   );
 }

@@ -20,6 +20,8 @@ import { getLargerProfileImage, toastoptions } from "@/lib/utils";
 import { toast } from "react-toastify";
 import { strict } from "assert";
 import { decodeToken } from "@/lib/jwt";
+import { motion } from "framer-motion";
+import { duration } from "html2canvas/dist/types/css/property-descriptors/duration";
 
 export default function AccountSettings() {
   
@@ -119,6 +121,13 @@ export default function AccountSettings() {
   };
 
   return (
+    <motion.div
+    className="w-full"
+    initial={{ opacity: 0, y:50 }}
+    animate={{ opacity: 1, y:0 }}
+    transition={{duration: 0.5}}
+    >
+
     <Card className="w-full mt-12 max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle>Account Settings</CardTitle>
@@ -151,7 +160,7 @@ export default function AccountSettings() {
                   <div
                     className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                     onClick={handleAvatarClick}
-                  >
+                    >
                     <Camera className="h-8 w-8 text-white" />
                   </div>
                   <input
@@ -160,7 +169,7 @@ export default function AccountSettings() {
                     className="hidden"
                     accept="image/*"
                     onChange={handleFileChange}
-                  />
+                    />
                 </div>
                 <div className="w-full space-y-2">
                   <div className="flex items-center space-x-2">
@@ -172,7 +181,7 @@ export default function AccountSettings() {
                         setuser({ ...user, name: e.target.value })
                       }
                       className="flex-1"
-                    />
+                      />
                   </div>
                   <div className="flex items-center space-x-2">
                     <Mail className="h-4 w-4 text-muted-foreground" />
@@ -223,5 +232,6 @@ export default function AccountSettings() {
         </div>
       </CardContent>
     </Card>
+                      </motion.div>
   );
 }

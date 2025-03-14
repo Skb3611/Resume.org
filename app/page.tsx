@@ -123,18 +123,18 @@ export default function Page() {
             <div className="flex flex-col items-center space-y-4 text-center h-full justify-center">
               <div>
                 <motion.h1
-                  initial={{ opacity: 0, y: 25 }}
+                  initial={{ opacity: 0,y:15,  scale: 0.9 }}
                   viewport={{ once: true }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.5 }}
+                  whileInView={{ opacity: 1, y: 0,  scale: 1 }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
                   className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tighter mb-3 sm:mb-5 text-white"
                 >
                   Create Your Perfect Resume in Minutes
                 </motion.h1>
                 <motion.p
-                  initial={{ opacity: 0, y: 25 }}
+                  initial={{ opacity: 0, y: 15, scale: 0.9  }}
                   viewport={{ once: true }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ duration: 0.5, delay: 0.7 }}
                   className="mx-auto max-w-[700px] text-white text-sm sm:text-base md:text-lg xl:text-xl"
                 >
@@ -143,9 +143,9 @@ export default function Page() {
                 </motion.p>
               </div>
               <motion.div
-                initial={{ opacity: 0, y: 25 }}
+                initial={{ opacity: 0, y: 15, scale: 0.9 }}
                 viewport={{ once: true }}
-                whileInView={{ opacity: 1, y: 0 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.5, delay: 1 }}
                 className="space-y-2 sm:space-y-0 sm:space-x-4 my-1 flex flex-col items-center justify-center sm:flex-row"
               >
@@ -170,27 +170,82 @@ export default function Page() {
           </div>
         </section>
 
-        <section
-          className="w-full py-8 sm:py-12 md:py-16 lg:py-24"
-          id="features"
-        >
-          <div className="container mx-auto px-4 md:px-6">
-            <motion.h2
-              initial={{ opacity: 0, y: 25 }}
+        <section className="container mx-auto w-full py-20 bg-background dark:bg-background" id="features">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center mb-16 text-center">
+            <motion.span 
+              initial={{ opacity: 0, width: 0 }}
+              whileInView={{ opacity: 1, width: "5rem" }}
               viewport={{ once: true }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-center mb-8 sm:mb-12"
+              transition={{ duration: 0.8 }}
+              className="inline-block h-1 bg-primary rounded mb-6"
+            />
+            
+            <motion.h2 
+              variants={headingVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="text-3xl md:text-5xl font-bold tracking-tighter"
             >
               Why Choose resume.org?
             </motion.h2>
-            <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((feature, index) => (
-                <FeatureCard key={index} {...feature} index={index} />
-              ))}
-            </div>
+            
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="mt-4 max-w-md text-gray-500"
+            >
+              We've reimagined the resume creation process to help you stand out
+            </motion.p>
           </div>
-        </section>
+          
+          <motion.div 
+            className="grid max-w-6xl mx-auto grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {features.map((feature, index) => {
+              const colors = [
+                'bg-blue-50 text-blue-600', 
+                'bg-amber-50 text-amber-600', 
+                'bg-emerald-50 text-emerald-600',
+                'bg-violet-50 text-violet-600',
+                'bg-rose-50 text-rose-600',
+                'bg-cyan-50 text-cyan-600'
+              ];
+              const colorClass = colors[index % colors.length];
+              
+              return (
+                <motion.div 
+                  key={index} 
+                  variants={itemVariants}
+                  whileHover={{ 
+                    scale: 1.05,
+                    transition: { duration: 0.3 }
+                  }}
+                  className="flex flex-col items-start p-6 rounded-lg backdrop-blur-lg bg-foreground/5 shadow-sm shadow-foreground/25  "
+                >
+                  <motion.div 
+                    className={`rounded-xl p-3 ${colorClass.split(' ')[0]}`}
+                    whileHover={{ 
+                      boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" 
+                    }}
+                  >
+                    <feature.icon className={`h-6 w-6 ${colorClass.split(' ')[1]}`} />
+                  </motion.div>
+                  <h3 className="mt-4 text-xl font-medium">{feature.title}</h3>
+                  <p className="mt-2 text-gray-500">{feature.description}</p>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
 
         <section
           className="py-8 sm:py-12 md:py-16 lg:py-24 bg-gray-100 dark:bg-gray-800 w-full"
@@ -216,7 +271,7 @@ export default function Page() {
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: index * 0.2 }}
+                      transition={{ duration: 0.5, delay: index * 0.2 }}
                       key={item.id}
                       className="group relative aspect-[3/4] overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-xl"
                     >
@@ -238,16 +293,18 @@ export default function Page() {
                 : Array(6)
                     .fill(0)
                     .map((_, index) => (
-                      <motion.div
-                         initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: index * 0.2 }}
-                        key={index}
-                        className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md"
-                      >
-                        <Skeleton className="w-full h-full object-cover bg-foreground/10" />
-                      </motion.div>
+                      <div className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md">
+                      <Skeleton className="w-full h-full object-cover bg-foreground/10" />
+                      </div>
+                      // <motion.div
+                      //   initial={{ opacity: 0, scale: 0.8 }}
+                      //   whileInView={{ opacity: 1, scale: 1 }}
+                      //   viewport={{ once: true }}
+                      //   transition={{ duration: 0.4, delay: index * 0.2 }}
+                      //   key={index}
+                      //   className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md"
+                      // >
+                      // </motion.div>
                     ))}
             </div>
             <div className="mt-8 sm:mt-12 text-center">
@@ -439,4 +496,37 @@ const cardVariants: Variants = {
       duration: 1,
     },
   },
+};
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3
+    }
+  }
+};
+
+const headingVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.6, 
+      ease: "easeOut" 
+    }
+  }
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.5, 
+      ease: "easeOut" 
+    }
+  }
 };

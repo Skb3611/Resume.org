@@ -84,3 +84,29 @@ body {
     @apply bg-background text-foreground;
   }
 }
+/* Default Custom Scrollbar */
+
+
+/* Webkit Browsers */
+*::-webkit-scrollbar {
+  width: 0.3rem;
+  border-left-color: transparent;
+  padding: 1px;
+  border-left: 1px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--background);
+  @apply bg-background
+}
+
+*::-webkit-scrollbar-thumb {
+
+  border-radius: 9999px;
+  width: 0.3rem;
+  @apply bg-foreground
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground
+}

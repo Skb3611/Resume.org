@@ -44,6 +44,8 @@ import TemplatesPage from "../templates/page";
 import UserSettings from "@/components/User_Settings";
 import { getUserTemplates } from "@/lib/serveractions";
 import {motion} from "framer-motion"
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function UserDashboard() {
   const { data: session } = useSession();
@@ -78,6 +80,7 @@ export default function UserDashboard() {
       effectInstance?.destroy();
     };
   }, [activeTab]);
+
 
   useEffect(() => {
     if (session) {
@@ -293,7 +296,7 @@ export default function UserDashboard() {
                   <Card className="w-full md:w-1/3">
                     <CardHeader>
                       <CardTitle className="text-center mb-2">
-                        Provider Type
+                        Provider Name 
                       </CardTitle>
                       <CardDescription className=" m-auto">
                         {user
@@ -412,7 +415,7 @@ export default function UserDashboard() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-background">
-      <aside className="hidden lg:flex w-56 2xl:w-64 flex-shrink-0 bg-background border-r">
+      <aside className="hidden lg:flex w-56 2xl:w-64 flex-shrink-0 bg-background border-r max-h-screen">
         <nav className="flex-1 space-y-3 p-4">
           <Button
             variant={activeTab === "home" ? "default" : "ghost"}
@@ -450,7 +453,7 @@ export default function UserDashboard() {
         </nav>
       </aside>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden max-h-screen">
         <ScrollArea className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
           <header className=" shadow-sm absolute z-10 lg:hidden w-full">
             <div className="sm:px-6 p-2 flex items-center justify-between">
@@ -527,7 +530,7 @@ export default function UserDashboard() {
               </div>
             </div>
           </header>
-          <div className="max-w-3xl md:max-w-6xl xl:max-w-7xl 2xl:max-w-full mx-auto min-h-screen">
+          <div className="max-w-3xl md:max-w-6xl xl:max-w-7xl 2xl:max-w-full mx-auto ">
             {renderContent()}
           </div>
         </ScrollArea>
@@ -538,6 +541,7 @@ export default function UserDashboard() {
       >
         abc
       </div>
+    
     </div>
   );
 }

@@ -28,6 +28,13 @@ const nextConfig = {
         pathname: '/**',
       },
       
+      {
+        protocol: 'https',
+        hostname: 'resume-org.vercel.app',
+        port: '',
+        pathname: '/**',
+      },
+      
     ]
   
   },

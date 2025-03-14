@@ -21,8 +21,7 @@ import { toast } from "react-toastify";
 import { strict } from "assert";
 import { decodeToken } from "@/lib/jwt";
 import { motion } from "framer-motion";
-import { duration } from "html2canvas/dist/types/css/property-descriptors/duration";
-
+  
 export default function AccountSettings() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);

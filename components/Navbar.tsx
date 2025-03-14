@@ -7,7 +7,7 @@ import ThemeButton from "./ThemeButton";
 import Connection from "./Connection";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-
+import Image from "next/image";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -40,8 +40,8 @@ const Navbar = () => {
   return (
     <header className="px-4 lg:px-6 h-16 flex items-center border-b sticky top-0 overflow-hidden z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <Link className="flex items-center justify-center" href="/">
-        <FileText className="h-6 w-6" />
-        <span className="ml-2 text-lg md:text-2xl font-bold">resume.org</span>
+        <Image src="https://resume-org.vercel.app/favicon.ico" alt="logo" width={25} height={25} className="dark:invert" />
+        <span className=" text-lg md:text-2xl font-bold">esume.org</span>
       </Link>
       <nav className="ml-auto h-full items-center hidden md:flex md:gap-4 lg:gap-6">
         <NavItems />

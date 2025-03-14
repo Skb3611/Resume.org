@@ -26,8 +26,8 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { handleDownloadPDF, toastoptions } from "@/lib/utils";
-import { toast } from "react-toastify";
+import { handleDownloadPDF } from "@/lib/utils";
+import { toast } from "sonner"
 import {motion} from "framer-motion";
 export interface PersonalData {
   name: string;
@@ -258,14 +258,13 @@ export default function ResumeBuilder() {
     );
     if (bool)
       toast.promise(
-        bool,
-        {
-          pending: "Saving...",
-          success: "Saved successfully",
-          error: "Error saving",
-        },
-        toastoptions
-      );
+       bool,
+       {
+        loading:"Saving...",
+        success:"Saved successfully",
+        error:"Error saving"
+       
+      })  
   };
 
   const [activeTab, setActiveTab] = useState<string>("PersonalInformation");

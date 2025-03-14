@@ -13,8 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Mail, Loader2, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import { toast } from "react-toastify";
-import { toastoptions } from "@/lib/utils";
+import { toast } from "sonner"
+
 import Link from "next/link";
 
 const ForgotPassword = () => {
@@ -25,14 +25,14 @@ const ForgotPassword = () => {
     e.preventDefault();
 
     if (!email) {
-      toast.warning("Please enter your email", toastoptions);
+      toast.warning("Please enter your email");
       return;
     }
 
     // Email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      toast.error("Invalid email format", toastoptions);
+      toast.error("Invalid email format");
       return;
     }
 
@@ -51,13 +51,13 @@ const ForgotPassword = () => {
       console.log(data);
 
       data.success
-        ? toast.success("Reset link sent", toastoptions)
-        : toast.error(data.message, toastoptions);
+        ? toast.success("Reset link sent",{description:"Check your email for the reset link"})
+        : toast.error(data.message);
 
       // Clear form
       setEmail("");
     } catch (error) {
-      toast.error("Internal Server Error", toastoptions);
+      toast.error("Internal Server Error",{description:"Please try again later"})
     } finally {
       setIsSubmitting(false);
     }

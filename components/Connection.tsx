@@ -1,5 +1,7 @@
 "use client";
 export const dynamic = "force-dynamic";
+import { toast } from "sonner"
+
 
 import React, { useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
@@ -17,10 +19,10 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { getCookies, clearCookies } from "@/lib/serveractions";
 import { decodeToken } from "@/lib/jwt";
-import { toast } from "react-toastify";
+
 import { JwtPayload } from "jsonwebtoken";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { getLargerProfileImage, toastoptions } from "@/lib/utils";
+import { getLargerProfileImage } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,7 +62,9 @@ const Connection = () => {
         !searchParams.has("template") &&
           toast.error(
             "This email is already linked with another provider.",
-            toastoptions
+            {
+              description:"Please try a different email or login with the same email"
+            } 
           );
         router.push("/");
         return;
@@ -68,7 +72,9 @@ const Connection = () => {
   
       if (error === "NotLoggedIn") {
         !searchParams.has("template") &&
-          toast.error("Please login to continue", toastoptions);
+          toast.error("Please login to continue",{
+            description:"Can't access this page",
+          });
         router.push("/");
         return;
       }
@@ -79,13 +85,15 @@ const Connection = () => {
   
         if (check && check.exp && check.exp < new Date().getTime() / 1000) {
           !searchParams.has("template") &&
-            toast.error("Invalid Token. Try again", toastoptions);
+            toast.error("Login Again",{
+              description:"Token expired."
+            });
           await clearCookies();
           return;
         }
   
         !searchParams.has("template") &&
-          toast.success("Logged in successfully", toastoptions);
+          toast.success("Logged in successfully");
         setdecoded(check);
         localStorage.setItem("custom_user", JSON.stringify(check) ?? "");
       }
@@ -108,17 +116,19 @@ const Connection = () => {
     let result = await res.json();
 
     if (result.status == false)
-      return toast.error(result.message, toastoptions);
+      return toast.error(result.message);
     token = await getCookies();
     if (token) {
       let check = decodeToken(token?.value ?? "");
       check
         ? (() => {
-            toast.success("Logged in successfully", toastoptions);
+            toast.success("Logged in successfully");
             setdecoded(check);
             localStorage.setItem("custom_user", JSON.stringify(check) ?? "");
           })()
-        : toast.error("Invalid Token.Try again", toastoptions);
+        : toast.error("Token Expired",{
+          description:"Please login again"
+        });
     }
     setIsDialogOpen(false);
     setdata({ name: "", email: "", password: "" });
@@ -136,7 +146,7 @@ const Connection = () => {
     let result = await res.json();
 
     if (result.status == false)
-      return toast.error(result.message, toastoptions);
+      return toast.error(result.message);
     else {
       token = await getCookies();
       if (token) {
@@ -144,11 +154,13 @@ const Connection = () => {
 
         check
           ? (() => {
-              toast.success("Logged in successfully", toastoptions);
+              toast.success("Logged in successfully");
               setdecoded(check);
               localStorage.setItem("custom_user", JSON.stringify(check) ?? "");
             })()
-          : toast.error("Invalid Token.Try again", toastoptions);
+          : toast.error("Token Expired",{
+            description:"Please login again"
+          });
       }
     }
     setIsDialogOpen(false);
@@ -160,16 +172,17 @@ const Connection = () => {
   };
   const handleSignout = async () => {
     if (session) {
-      toast.success("Logged out successfully", toastoptions);
+      toast.success("Logged out successfully");
       setTimeout(() => {
         signOut();
       }, 2000);
     } else {
       let token = await clearCookies();
+      localStorage.clear()
       setdecoded(null);
       setIsDialogOpen(false);
       localStorage.removeItem("custom_user");
-      toast.success("Logged out successfully", toastoptions);
+      toast.success("Logged out successfully");
       setTimeout(() => {
         router.push("/");
       }, 3000);

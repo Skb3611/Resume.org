@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import Footer from "@/components/Footer";
+
 import SessionWrapper from "@/components/SessionWrapper";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,7 +27,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
+
   return (
     <html lang="en">
       <body
@@ -35,29 +35,22 @@ export default function RootLayout({
       >
 
         <SessionWrapper>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
           >
             {/* <Navbar /> */}
-            <ToastContainer 
-            position="top-center"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-            />
+            <Toaster
+            richColors
+            visibleToasts={1}
+            duration={2000}
+            position="bottom-right" />
             {children}
 
-        </ThemeProvider>
-          </SessionWrapper>
+          </ThemeProvider>
+        </SessionWrapper>
 
       </body>
     </html>

@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Loader2, Lock } from "lucide-react";
 import { motion } from "framer-motion";
-import { toast } from "react-toastify";
+import { toast } from "sonner"
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { toastoptions } from "@/lib/utils";
+
 
 const PasswordReset = ({params}:{params:{token:string}}) => {
  
@@ -22,14 +22,14 @@ const PasswordReset = ({params}:{params:{token:string}}) => {
     e.preventDefault();
     
     if (!newPassword || !confirmPassword) {
-      toast.warning("Please fill in all fields",toastoptions);
+      toast.warning("Please fill in all fields",{description:"Please fill in all fields"});
       return;
     }
 
   
     
     if (newPassword !== confirmPassword) {
-      toast.error("Passwords do not match",toastoptions);
+      toast.error("Passwords do not match",{description:"Passwords do not match"});
       return;
     }
 
@@ -49,7 +49,7 @@ const PasswordReset = ({params}:{params:{token:string}}) => {
 
       let data = await res.json()
       if(data.status !== 200){
-        toast.warning(data.message,toastoptions)
+        toast.warning(data.message)
         return
       }
       else toast.success("Password updated successfully");
@@ -60,7 +60,7 @@ const PasswordReset = ({params}:{params:{token:string}}) => {
       }, 2000);
     } catch (error) {
       console.log(error);
-      toast.warning("An error occurred. Please try again later",toastoptions);
+      toast.warning("Internal Server Error",{description:"Please try again later"});
     } finally {
       setIsSubmitting(false);
     }

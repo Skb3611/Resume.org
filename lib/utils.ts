@@ -2,22 +2,12 @@
 import { clsx, type ClassValue } from "clsx";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { ToastPosition } from "react-toastify";
 import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const toastoptions = {
-  position: "top-center" as ToastPosition,
-  autoClose: 2000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: true,
-  progress: undefined,
-  theme: "dark",
-};
+
 export function getLargerProfileImage(url: string, size: number = 400){
   if (url) {
     if (url.includes("googleusercontent.com")) {

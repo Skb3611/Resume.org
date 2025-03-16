@@ -223,7 +223,7 @@ const Connection = () => {
                       )}
                     />
                     <AvatarFallback>
-                      {decoded.name
+                      {decoded?.name
                         .split(" ")
                         .map((n: string) => n[0])
                         .join("")
@@ -240,7 +240,7 @@ const Connection = () => {
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">
-                      {(session && session.user?.name) ?? decoded.name}
+                      {(session && session.user?.name) ?? decoded?.name}
                     </p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {(session && session.user?.email) ?? decoded?.email}

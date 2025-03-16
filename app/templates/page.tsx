@@ -76,7 +76,7 @@ export default function TemplatesPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 min-h-[89vh]">
+    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 min-h-[89vh] mt-20">
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -121,14 +121,14 @@ export default function TemplatesPage() {
               <motion.div
               onClick={()=>router.push(`/editor?template=${item.id}`)}
                 key={item.id}
-                className="group relative aspect-[3/4] overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-xl"
+                className="group relative aspect-[3/4] overflow-hidden rounded-lg shadow-md"
                 variants={itemVariants}
               >
                 <Image
                   fill
                   src={item?.thumbnail ?? ""}
                   alt={`${item?.id} template`}
-                  className="w-full h-full object-fill transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-full object-fill "
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 md:flex flex-col items-center justify-center p-4 hidden">
                   <Button asChild variant="secondary" className="z-10">

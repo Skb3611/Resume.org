@@ -11,7 +11,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   return (
     <NextThemesProvider {...props}>
       <div className={`${pathname==="/dashboard" ? "no-scrollbar" : "custom-scroll"}`}>
-      {(pathname !== "/dashboard" && pathname !== "/forget" && !pathname.includes("/resetpassword")) && (
+      {(pathname !== "/dashboard" && pathname !== "/forget" && !pathname.includes("/resetpassword")) && !pathname.includes("/editor") && (
         <Navbar />
       )}
       {children}

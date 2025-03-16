@@ -9,15 +9,9 @@ export async function POST(req: Request) {
       where: {
         email: email,
       },
-      select:{
-        id:true,
-        name:true,
-        email:true,
-        image:true,
-        password:true,
-        accounts:true
-      },
-     
+      include:{
+        accounts:true,
+      }, 
     });
     if (!user) return NextResponse.json({message:"No user Found with this email.",status:false});
     let password_check = await bcrypt.compare(password, user.password ?? "");
@@ -29,7 +23,8 @@ export async function POST(req: Request) {
             email:user.email,
             id:user.id,
             image:user.image,
-            provider:user.accounts[0].provider
+            provider:user.accounts[0].provider,
+            accountType:user.accountType
           }
           console.log(obj);
           token = signToken(obj);

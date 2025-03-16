@@ -57,6 +57,7 @@ const authOptions:AuthOptions = {
           lastname: profile.family_name,
           email: profile.email,
           image: profile.picture,
+          
         };
       },
     }),
@@ -85,6 +86,7 @@ const authOptions:AuthOptions = {
         email: dbUser?.email,
         image: dbUser?.image,
         provider: dbUser?.accounts[0].provider,
+        accountType: dbUser?.accountType,
       };
 
       return session;

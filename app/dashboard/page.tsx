@@ -43,7 +43,7 @@ import ReactDOM from "react-dom/client";
 import TemplatesPage from "../templates/page";
 import UserSettings from "@/components/User_Settings";
 import { getUserTemplates } from "@/lib/serveractions";
-import {motion} from "framer-motion"
+import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -72,7 +72,7 @@ export default function UserDashboard() {
         waveSpeed: 1.5, // Speed of wave animation
         zoom: 1, // Zoom level
         backgroundColor: 0x000000,
-        gyroControls: true, 
+        gyroControls: true,
       });
     }
     return () => {
@@ -80,7 +80,6 @@ export default function UserDashboard() {
       effectInstance?.destroy();
     };
   }, [activeTab]);
-
 
   useEffect(() => {
     if (session) {
@@ -242,9 +241,9 @@ export default function UserDashboard() {
         return (
           <section className="space-y-6">
             <motion.div
-            initial={{opacity:0,x:-20}}
-            animate={{opacity:1,x:0}}
-            transition={{duration:0.5}}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
               ref={componentRef}
               className="header h-[30dvh] md:h-[40dvh] bg-white relative"
             >
@@ -266,26 +265,26 @@ export default function UserDashboard() {
             <div className="max-w-6xl 2xl:max-w-[80%] mx-auto sm:px-6 lg:px-8">
               <div className="info mt-20 md:mt-28 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                 <div className="w-full md:w-1/2">
-                    {!isLoading ? (
-                      <motion.h1
-                      initial={{opacity:0,y:20}}
-                      animate={{opacity:1,y:0}}
-                      transition={{duration:0.5}}
-                      className="text-2xl md:text-3xl font-semibold w-full">
+                  {!isLoading ? (
+                    <motion.h1
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="text-2xl md:text-3xl font-semibold w-full"
+                    >
                       {user?.name}
-                      </motion.h1>
-                    ) : (
-                      <Skeleton className="w-2/4 h-8 rounded-md bg-muted my-2" />
-                    )}
+                    </motion.h1>
+                  ) : (
+                    <Skeleton className="w-2/4 h-8 rounded-md bg-muted my-2" />
+                  )}
                   <div className="text-base md:text-lg text-muted-foreground">
                     {!isLoading ? (
                       <motion.h2
-                      initial={{opacity:0,y:20}}
-                      animate={{opacity:1,y:0}}
-                      transition={{delay:0.2,duration:0.5}}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2, duration: 0.5 }}
                       >
-
-                      {user?.email ?? "No email"}
+                        {user?.email ?? "No email"}
                       </motion.h2>
                     ) : (
                       <Skeleton className="w-3/4 h-5 rounded-md bg-muted my-2" />
@@ -296,12 +295,22 @@ export default function UserDashboard() {
                   <Card className="w-full md:w-1/3">
                     <CardHeader>
                       <CardTitle className="text-center mb-2">
-                        Provider Name 
+                        Provider Name
                       </CardTitle>
-                      <CardDescription className=" m-auto">
+                      <CardDescription className="m-auto">
                         {user
                           ? getProvider(user?.provider as string)
                           : "Loading..."}
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                  <Card className="w-full md:w-1/3">
+                    <CardHeader>
+                      <CardTitle className="text-center mb-2">
+                        Account Type
+                      </CardTitle>
+                      <CardDescription className=" m-auto text-xl">
+                        {user ? user?.accountType : "Loading..."}
                       </CardDescription>
                     </CardHeader>
                   </Card>
@@ -328,63 +337,66 @@ export default function UserDashboard() {
                   <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {!isLoading && Templates.length == 0 ? (
                       <motion.div
-                      initial={{opacity:0,y:20}}
-                      animate={{opacity:1,y:0}}
-                      transition={{duration:0.5}}
-                      key="NoResumes">No resumes</motion.div>
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                        key="NoResumes"
+                      >
+                        No resumes
+                      </motion.div>
                     ) : (
-                      Templates.map((item: any,index:number) => {
+                      Templates.map((item: any, index: number) => {
                         return (
                           <motion.div
-                          initial={{opacity:0,y:20}}
-                      whileInView={{opacity:1,y:0}}
-                    viewport={{once:true}}
-                      transition={{duration:0.5,delay:0.05*index}}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.05 * index }}
                           >
-                          <Card key={item.id} className="p-4 h-[60dvh]">
-                            <CardContent className="relative h-[40vh] ">
-                              <Image
-                                fill
-                                src={`${process.env.NEXT_PUBLIC_PUBLIC_ACCESS_URL}Templates/Template${item.templateId}/preview.jpg`}
-                                alt={""}
-                                className="object-contain h-full w-full"
-                              ></Image>
-                            </CardContent>
-                            <CardFooter className="mt-1 flex-col justify-between gap-2 px-0">
-                              <div>
-                                <p className="text-xs text-start">
-                                  Created at:{" "}
-                                  {item.createdAt.toLocaleString("en-US", {
-                                    day: "2-digit",
-                                    month: "short",
-                                    year: "numeric",
-                                  })}
-                                </p>
-                                <p className="text-xs text-start">
-                                  Last updated:{" "}
-                                  {item.updatedAt.toLocaleString("en-US", {
-                                    day: "2-digit",
-                                    month: "short",
-                                    year: "numeric",
-                                  })}
-                                </p>
-                              </div>
-                              <div className="space-x-4">
-                                <Button onClick={() => handleDownload(item)}>
-                                  <Download />
-                                </Button>
-                                <Button>
-                                  <FileEdit
-                                    onClick={() =>
-                                      router.push(
-                                        `editor?template=${item.templateId}`
-                                      )
-                                    }
-                                  />
-                                </Button>
-                              </div>
-                            </CardFooter>
-                          </Card>
+                            <Card key={item.id} className="p-4 h-[60dvh]">
+                              <CardContent className="relative h-[40vh] ">
+                                <Image
+                                  fill
+                                  src={`${process.env.NEXT_PUBLIC_PUBLIC_ACCESS_URL}Templates/Template${item.templateId}/preview.jpg`}
+                                  alt={""}
+                                  className="object-contain h-full w-full"
+                                ></Image>
+                              </CardContent>
+                              <CardFooter className="mt-1 flex-col justify-between gap-2 px-0">
+                                <div>
+                                  <p className="text-xs text-start">
+                                    Created at:{" "}
+                                    {item.createdAt.toLocaleString("en-US", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    })}
+                                  </p>
+                                  <p className="text-xs text-start">
+                                    Last updated:{" "}
+                                    {item.updatedAt.toLocaleString("en-US", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    })}
+                                  </p>
+                                </div>
+                                <div className="space-x-4">
+                                  <Button onClick={() => handleDownload(item)}>
+                                    <Download />
+                                  </Button>
+                                  <Button>
+                                    <FileEdit
+                                      onClick={() =>
+                                        router.push(
+                                          `editor?template=${item.templateId}`
+                                        )
+                                      }
+                                    />
+                                  </Button>
+                                </div>
+                              </CardFooter>
+                            </Card>
                           </motion.div>
                         );
                       })
@@ -474,7 +486,6 @@ export default function UserDashboard() {
                       <SheetDescription>Navigation</SheetDescription>
                     </SheetHeader>
                     <nav className="flex flex-col space-y-2 mt-4">
-                      
                       <Button
                         variant={activeTab === "home" ? "default" : "ghost"}
                         className="py-5 w-full justify-start text-lg font-medium"
@@ -541,7 +552,6 @@ export default function UserDashboard() {
       >
         abc
       </div>
-    
     </div>
   );
 }

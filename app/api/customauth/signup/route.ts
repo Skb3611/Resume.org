@@ -43,7 +43,8 @@ export async function POST(req: Request) {
       email:result.user.email,
       id:result.user.id,
       image:result.user.image,
-      provider:result.account.provider
+      provider:result.account.provider,
+      accountType:result.user.accountType
     }
     let token = signToken(obj);
     response.cookies.set('token',token,{httpOnly:true,path:'/',secure:true});

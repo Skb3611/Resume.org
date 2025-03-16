@@ -11,6 +11,7 @@ import CommonComp from "@/components/TemplateComponents/CommonComp";
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
+  checkAccountLimit,
   createTemplate,
   getTemplateData,
   getUserTemplateData,
@@ -27,8 +28,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { handleDownloadPDF } from "@/lib/utils";
-import { toast } from "sonner"
-import {motion} from "framer-motion";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { Session } from "inspector/promises";
+import Link from "next/link";
+import Image from "next/image";
 export interface PersonalData {
   name: string;
   role: string;
@@ -144,6 +148,7 @@ export default function ResumeBuilder() {
     phone: "",
   });
   const [finaldata, setfinaldata] = useState({});
+  const [user, setuser] = useState<any>(null);
 
   const func = async () => {
     let id = params.get("template");
@@ -169,59 +174,85 @@ export default function ResumeBuilder() {
     }
   };
   useEffect(() => {
+    console.log(session);
+    let custom_user = JSON.parse(localStorage.getItem("custom_user")!);
+    if (custom_user) {
+      setuser(custom_user);
+      return;
+    }
+    if (status === "authenticated") {
+      console.log("authenticated");
+      setuser(session?.user);
+      return;
+    }
+  }, [session, status]);
+  useEffect(() => {
     (async () => {
       // console.log(session, status);
-      let custom_user = JSON.parse(localStorage.getItem("custom_user") ?? "{}");
-      if (status === "authenticated" || custom_user) {
-        let isTemplateCreated = await createTemplate(
+      if (!user) return;
+      let isAccountLimit = await checkAccountLimit(
+        user?.id,
+        parseInt(params.get("template") as string)
+      );
+      if (!isAccountLimit?.status) {
+        toast.error(isAccountLimit?.message, {
+          description: "Please upgrade your account to create more resumes",
+          duration: 5000,
+        });
+        router.push("/#pricing");
+        return;
+      }
+      let isTemplateCreated = await createTemplate(
+        parseInt(params.get("template") as string),
+        user?.id,
+        finaldata
+      );
+      if (!isTemplateCreated) {
+        let data = await getUserTemplateData(
           parseInt(params.get("template") as string),
-          (session?.user as { id?: string })?.id ?? custom_user?.id ?? "",
-          finaldata
+          user?.id
         );
-        if (!isTemplateCreated) {
-          let data = await getUserTemplateData(
-            parseInt(params.get("template") as string),
-            (session?.user as { id?: string })?.id ?? custom_user?.id ?? ""
-          );
-          // console.log(data);
-          if (data?.data && Object.keys(data.data).length !== 0) {
-            localStorage.setItem("resume", JSON.stringify(data?.data));
-          }
-        }
-        const resume = localStorage.getItem("resume");
-        if (resume) {
-          const parsed = JSON.parse(resume);
-          setpersonaldata(parsed);
-          seteducationdata(parsed?.Education);
-          setSkillsData(parsed?.Skills);
-          setexperiencedata(parsed?.Experience);
-          setProgress(parsed?.progress);
-          setlanguagesdata(parsed?.Languages);
-          setprojects(parsed?.Projects);
-          sethobbies(parsed?.Hobbies);
-          setreferences(parsed?.References);
-          setcertifications(parsed?.Certifications);
-          setawards(parsed?.Awards);
-          // setfinaldata(parsed);
+        // console.log(data);
+        if (data?.data && Object.keys(data.data).length !== 0) {
+          localStorage.setItem("resume", JSON.stringify(data?.data));
         }
       }
+      const resume = localStorage.getItem("resume");
+      if (resume) {
+        const parsed = JSON.parse(resume);
+        setpersonaldata(parsed);
+        seteducationdata(parsed?.Education);
+        setSkillsData(parsed?.Skills);
+        setexperiencedata(parsed?.Experience);
+        setProgress(parsed?.progress);
+        setlanguagesdata(parsed?.Languages);
+        setprojects(parsed?.Projects);
+        sethobbies(parsed?.Hobbies);
+        setreferences(parsed?.References);
+        setcertifications(parsed?.Certifications);
+        setawards(parsed?.Awards);
+        // setfinaldata(parsed);
+      }
     })();
-  }, [session]);
+  }, [user]);
 
   useEffect(() => {
     (async () => {
+      if (!user) return;
+
       if (status === "authenticated") {
         await updateTemplate(
           parseInt(params.get("template") as string),
-          (session?.user as { id?: string }).id ?? "",
+          user?.id,
           finaldata
         );
       }
     })();
   }, [finaldata]);
   useEffect(() => {
+    if (!user) return;
     func();
-  }, []);
+  }, [user]);
 
   let handlesave = async () => {
     setfinaldata({
@@ -257,14 +288,11 @@ export default function ResumeBuilder() {
       finaldata
     );
     if (bool)
-      toast.promise(
-       bool,
-       {
-        loading:"Saving...",
-        success:"Saved successfully",
-        error:"Error saving"
-       
-      })  
+      toast.promise(bool, {
+        loading: "Saving...",
+        success: "Saved successfully",
+        error: "Error saving",
+      });
   };
 
   const [activeTab, setActiveTab] = useState<string>("PersonalInformation");
@@ -464,12 +492,58 @@ export default function ResumeBuilder() {
   return (
     !isLoading && (
       <div className="container mx-auto p-4">
+        <header className="flex items-center justify-between mb-5">
+          <div className="logo">
+            <Link className="flex items-center justify-center" href="/">
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+              >
+                <Image
+                  src="https://resume-org.vercel.app/favicon.ico"
+                  alt="logo"
+                  width={25}
+                  height={25}
+                  className="dark:invert"
+                />
+              </motion.span>
+              <motion.span
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+                className=" text-lg md:text-2xl font-bold"
+              >
+                esume.org
+              </motion.span>
+            </Link>
+          </div>
+          <div className="button flex items-center gap-2 justify-center">
+            <Button
+              variant="outline"
+              onClick={() => {
+                router.push("/");
+              }}
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Return Home
+            </Button>
+            <Button
+              onClick={() => {
+                router.push("/dashboard");
+              }}
+            >
+              Dashboard
+            </Button>
+          </div>
+        </header>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <motion.div
-          initial={{opacity:0,x:-50}}
-          animate={{opacity:1,x:0}}
-          transition={{duration:0.5}}
-          className="space-y-4 ">
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-4 "
+          >
             <div className="min-h-[87vh] ">
               <Card className="md:p-6 p-4 min-h-[87vh] flex flex-col justify-between">
                 <Tabs value={activeTab} onValueChange={handleTabChange}>
@@ -530,10 +604,11 @@ export default function ResumeBuilder() {
             </div>
           </motion.div>
           <motion.div
-          initial={{opacity:0,x:50}}
-          animate={{opacity:1,x:0}}
-          transition={{duration:0.5}}
-          className="bg-secondary dark:bg-card w-full p-4 rounded-lg shadow-lg md:block hidden  ">
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-secondary dark:bg-card w-full p-4 rounded-lg shadow-lg md:block hidden  "
+          >
             {Template && renderTemplate()}
           </motion.div>
           <div className="md:hidden">

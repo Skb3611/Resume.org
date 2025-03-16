@@ -2,8 +2,7 @@
 import React from "react";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import bcrypt from "bcryptjs";
-import nodemailer from "nodemailer"
-import {render} from "@react-email/components"
+import { render } from "@react-email/components";
 import ForgotPasswordEmail from "@/components/ForgetEmail";
 const s3 = new S3Client({
   credentials: {
@@ -15,8 +14,8 @@ const s3 = new S3Client({
   region: "auto",
 });
 
-export async function uploadImg(id: string, file: string){
-  try{
+export async function uploadImg(id: string, file: string) {
+  try {
     const base64 = file.split(",")[1]; // Remove the "data:image/png;base64," part
     const fileBuffer = Buffer.from(base64, "base64");
     const command = new PutObjectCommand({
@@ -42,7 +41,7 @@ export async function getTemplates() {
   try {
     const templates = await prisma.template.findMany();
     return templates;
-  } catch (error) {}
+  } catch (error) { }
 }
 export async function getTemplateData(id: number) {
   try {
@@ -61,7 +60,88 @@ export async function getTemplateData(id: number) {
     console.log(error);
   }
 }
+async function updateResumeCount(userid: string) {
+  try {
+    let user = await prisma.user.update({
+      where: {
+        id: userid,
+      },
+      data: {
+        resumesCreated: { increment: 1 },
+      },
+    });
+    if (user) return true;
+  } catch (er) {
+    console.log(er);
+  }
+}
 
+export const checkAccountLimit = async (userid: string, templateId: number) => {
+  try {
+    let user = await prisma.user.findUnique({
+      where: {
+        id: userid,
+      },
+      select: {
+        accountType: true,
+        resumesCreated: true,
+        UserTemplateRecord: true,
+      },
+    });
+    console.log(user);
+    let check = user?.UserTemplateRecord.find(item => item.templateId == templateId)
+    console.log(check);
+    switch (user?.accountType) {
+      case "Basic":
+        return check ? {
+          status: true,
+          message: "Resume created successfully"
+        } :
+          user?.resumesCreated >= 5 ?
+            {
+              status: false,
+              message: "You have reached the maximum limit of resumes"
+            }
+            :
+            {
+              status: true,
+              message: "Resume created successfully"
+            }
+
+      case "Premium":
+        return check ? {
+          status: true,
+          message: "Resume created successfully"
+        } :
+          user?.resumesCreated >= 15
+            ? {
+              status: false,
+              message: "You have reached the maximum limit of resumes",
+            }
+            : {
+              status: true,
+              message: "Resume created successfully",
+            };
+
+      case "Professional":
+        return check ? {
+          status: true,
+          message: "Resume created successfully"
+        } :
+          user?.resumesCreated >= 100
+            ? {
+              status: false,
+              message: "You have reached the maximum limit of resumes",
+            }
+            : {
+              status: true,
+              message: "Resume created successfully",
+            };
+    }
+  } catch (er) {
+    console.log(er);
+  }
+};
 export async function createTemplate(
   templateId: number,
   userid: string,
@@ -77,6 +157,7 @@ export async function createTemplate(
       },
     });
     if (!check) {
+      await updateResumeCount(userid);
       let bool = await prisma.userTemplateRecord.create({
         data: {
           userId: userid,
@@ -161,25 +242,25 @@ export async function updateUserDetails(
         email: email,
         image: `${process.env.PUBLIC_ACCESS_URL}UserProfile/${id}.png`,
       },
-      include:{
-        accounts:true
-      }
+      include: {
+        accounts: true,
+      },
     });
     // console.log(bool)
-    if (bool){
-      if(bool.accounts[0].type == "custom_auth"){
+    if (bool) {
+      if (bool.accounts[0].type == "custom_auth") {
         let obj = {
-          name:bool.name,
-          email:bool.email,
-          id:bool.id,
-          image:bool.image
-        }
-        let token = signToken(bool)
-        console.log(token)
-        return token
+          name: bool.name,
+          email: bool.email,
+          id: bool.id,
+          image: bool.image,
+        };
+        let token = signToken(bool);
+        console.log(token);
+        return token;
       }
       return true;
-    } 
+    }
 
     return false;
   } catch (error) {
@@ -235,8 +316,6 @@ export async function updateUserPassword(
   }
 }
 
-
-
 export async function getCookies() {
   const cookiestore = cookies();
   const token = cookiestore.get("token");
@@ -246,4 +325,3 @@ export async function clearCookies() {
   const cookiestore = cookies();
   cookiestore.delete("token");
 }
-

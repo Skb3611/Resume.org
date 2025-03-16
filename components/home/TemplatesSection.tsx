@@ -19,15 +19,16 @@ const TemplatesSection = () => {
   const [TemplateImages, setTemplateImages] = useState<TemplateImagesData[]>(
     []
   );
-  const [IsLoading, setIsLoading] = useState(true);
-
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    (async () => {
-      let images = await getTemplates();
-      setTemplateImages(images as TemplateImagesData[]);
+    const fetchTemplates = async () => {
+      const templates = await getTemplates();
+      setTemplateImages(templates as TemplateImagesData[]);
       setIsLoading(false);
-    })();
+    };
+    fetchTemplates();
   }, []);
+
   return (
     <div className="container mx-auto px-4 md:px-6">
       <div className="flex flex-col items-center justify-center lg:mb-16 mb-8 text-center">
@@ -60,7 +61,7 @@ const TemplatesSection = () => {
             </motion.p>
           </div>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8 container lg:max-w-6xl mx-auto">
-        {!IsLoading && TemplateImages != undefined
+        {(!isLoading && TemplateImages != undefined)
           ? TemplateImages.slice(0, 6)?.map((item, index) => (
               <motion.div
                 onClick={() => Router.push(`/editor?template=${item?.id}`)}
@@ -69,13 +70,14 @@ const TemplatesSection = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.2 }}
                 key={item.id}
-                className="group relative aspect-[3/4] overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-xl"
+                className="group relative aspect-[3/4] overflow-hidden rounded-lg shadow-md"
+                whileHover={{ scale: 1.02 }}
               >
                 <Image
                   fill
                   src={item?.thumbnail ?? ""}
                   alt={`${item?.id} template`}
-                  className="w-full h-full object-fill transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-full object-fill"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 md:flex flex-col items-center justify-center p-4 hidden">
                   <Button asChild variant="secondary" className="z-10">
@@ -89,18 +91,18 @@ const TemplatesSection = () => {
           : Array(6)
               .fill(0)
               .map((_, index) => (
-                <div className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md">
-                  <Skeleton className="w-full h-full object-cover bg-foreground/10" />
-                </div>
-                // <motion.div
-                //   initial={{ opacity: 0, scale: 0.8 }}
-                //   whileInView={{ opacity: 1, scale: 1 }}
-                //   viewport={{ once: true }}
-                //   transition={{ duration: 0.4, delay: index * 0.2 }}
-                //   key={index}
-                //   className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md"
-                // >
-                // </motion.div>
+                // <div className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md">
+                //   <Skeleton className="w-full h-full object-cover bg-foreground/10" />
+                // </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.2 }}
+                  key={index}
+                  className="relative aspect-[3/4] overflow-hidden rounded-lg shadow-md"
+                >
+                </motion.div>
               ))}
       </div>
       <div className="mt-8 sm:mt-12 text-center">

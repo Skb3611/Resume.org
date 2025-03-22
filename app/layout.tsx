@@ -51,7 +51,6 @@ export default function RootLayout({
 
           </ThemeProvider>
         </SessionWrapper>
-
       </body>
     </html>
   );

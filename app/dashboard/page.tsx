@@ -44,11 +44,9 @@ import TemplatesPage from "../templates/page";
 import UserSettings from "@/components/User_Settings";
 import { getUserTemplates } from "@/lib/serveractions";
 import { motion } from "framer-motion";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 export default function UserDashboard() {
-  const { data: session } = useSession();
+  const { data: session,update } = useSession();
   const [user, setuser] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("profile");
   const componentRef = useRef(null);
@@ -59,6 +57,8 @@ export default function UserDashboard() {
   const printRef = useRef<HTMLDivElement | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   let root: ReactDOM.Root | null = null;
+
+ 
   useEffect(() => {
     // Apply the Vanta Waves effect to each div in the ref array
     let effectInstance: any;

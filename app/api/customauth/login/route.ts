@@ -24,7 +24,8 @@ export async function POST(req: Request) {
             id:user.id,
             image:user.image,
             provider:user.accounts[0].provider,
-            accountType:user.accountType
+            accountType:user.accountType,
+            
           }
           console.log(obj);
           token = signToken(obj);

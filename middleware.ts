@@ -7,13 +7,18 @@ export async function middleware(req: NextRequest) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
     const custom_token = await getCookies();
 
-    const protectedRoutes = ['/dashboard', '/editor']; // Pages that require authentication
+    const protectedRoutes = ['/dashboard', '/editor','/pricing',"/payment"]; // Pages that require authentication
     const guestOnlyRoutes = ['/resetpassword', '/forget']; // Pages NOT accessible to logged-in users
 
     const path = req.nextUrl.pathname;
 
     // 🚀 **Redirect UNAUTHENTICATED users away from protected pages**
     if (protectedRoutes.some(route => path.startsWith(route))) {
+        if (!token && !custom_token) {
+            return NextResponse.redirect(new URL('/?error=NotLoggedIn', req.url));
+        }
+    }
+    if(path.startsWith("/payment")){
         if (!token && !custom_token) {
             return NextResponse.redirect(new URL('/?error=NotLoggedIn', req.url));
         }
@@ -30,5 +35,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*', '/editor/:path*', '/resetpassword', '/forget'],
+    matcher: ['/dashboard/:path*', '/editor/:path*', '/resetpassword', '/forget', '/pricing',"/payment/:path*"],
 };

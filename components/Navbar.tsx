@@ -73,7 +73,7 @@ const Navbar = () => {
       initial={{ opacity: 0, y: -10, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.6 }}
-      className="px-3 lg:px-6 md:h-16 h-14 flex items-center justify-between xl:w-[80%] md:w-[90%] w-[95%] md:ml-[5%] ml-[2.5%] xl:ml-[10%] border-b fixed top-0 mt-2 overflow-hidden z-50 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70 rounded-2xl  border border-neutral-300 dark:border-neutral-900 shadow-md shadow-secondary-foreground/20  "
+      className="px-3 lg:px-6 md:h-16 h-14 flex items-center justify-between xl:w-[80%] md:w-[90%] w-[95%] md:ml-[5%] ml-[2.5%] xl:ml-[10%] border-b fixed top-0 mt-2 overflow-hidden z-50 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 rounded-2xl  border border-neutral-300 dark:border-neutral-900 shadow-[0_0_10px_0_rgba(0,0,0,0.1)] shadow-secondary-foreground/20 "
     >
       <Link className="flex items-center justify-center" href="/">
         <motion.span

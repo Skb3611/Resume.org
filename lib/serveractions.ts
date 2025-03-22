@@ -113,7 +113,7 @@ export const checkAccountLimit = async (userid: string, templateId: number) => {
           status: true,
           message: "Resume created successfully"
         } :
-          user?.resumesCreated >= 15
+          user?.resumesCreated >= 10
             ? {
               status: false,
               message: "You have reached the maximum limit of resumes",

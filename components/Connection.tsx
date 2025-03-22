@@ -175,7 +175,7 @@ const Connection = () => {
       toast.success("Logged out successfully");
       setTimeout(() => {
         signOut();
-      }, 2000);
+      }, 500);
     } else {
       let token = await clearCookies();
       localStorage.clear()
@@ -185,7 +185,7 @@ const Connection = () => {
       toast.success("Logged out successfully");
       setTimeout(() => {
         router.push("/");
-      }, 3000);
+      }, 500);
     }
   };
 

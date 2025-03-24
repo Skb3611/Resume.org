@@ -15,6 +15,7 @@ import * as THREE from "three";
 import PricingSection from "@/components/home/PricingSection";
 import TemplatesSection from "@/components/home/TemplatesSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
+import { BackgroundEffects } from "@/components/home/BackGroundEffects";
 
 export default function Page() {
   const Router = useRouter();
@@ -47,6 +48,49 @@ export default function Page() {
       });
     };
   }, []);
+
+  const [isHovering, setIsHovering] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement> | MouseEvent) => {
+    if (!isHovering) return;
+    
+    // Update mouse position for gradient effect
+    const { clientX, clientY } = event;
+    setMousePosition({ x: clientX, y: clientY });
+  };
+  
+  useEffect(() => {
+    // Add mousemove event listener to document
+    document.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [isHovering]);
+  
+  // Parallax movement for background gradients
+  useEffect(() => {
+    if (!isHovering) return;
+    
+    const gradients = document.querySelectorAll('.bg-gradient');
+    const colorSpots = document.querySelectorAll('.color-spot');
+    
+    gradients.forEach((gradient, index) => {
+      const speed = 0.02 - (index * 0.01);
+      const x = (mousePosition.x * speed);
+      const y = (mousePosition.y * speed);
+      
+      (gradient as HTMLElement).style.transform = `translate(${x}px, ${y}px)`;
+    });
+    
+    colorSpots.forEach((spot, index) => {
+      const speed = 0.08 - (index * 0.01);
+      const x = (mousePosition.x * speed);
+      const y = (mousePosition.y * speed);
+      
+      (spot as HTMLElement).style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+    });
+  }, [mousePosition, isHovering]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -109,26 +153,38 @@ export default function Page() {
         </section>
 
         <section
-          className="container mx-auto w-full lg:py-20 py-10 bg-background dark:bg-background"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+          className="container mx-auto w-full lg:py-20 py-10"
           id="features"
         >
+      <BackgroundEffects/>
+
           <FeaturesSection />
         </section>
 
         <section
-          className="py-8 sm:py-12 md:py-16 lg:py-24 bg-secondary w-full"
+         onMouseEnter={() => setIsHovering(true)}
+         onMouseLeave={() => setIsHovering(false)}
+          className="py-8 sm:py-12 md:py-16 lg:py-24 bg-secondary dark:bg-background w-full"
           id="templates"
         >
           <TemplatesSection />
         </section>
 
-        <section className="w-full py-8 " id="pricing">
+        <section className="w-full py-8 " id="pricing"
+         onMouseEnter={() => setIsHovering(true)}
+         onMouseLeave={() => setIsHovering(false)}
+        >
           <div className="container mx-auto px-4 md:px-6 max-w-7xl">
             <PricingSection />
           </div>
         </section>
 
-        <section className="w-full py-8 sm:py-12 md:py-16 lg:py-24 bg-secondary">
+        <section className="w-full py-8 sm:py-12 md:py-16 lg:py-24 bg-secondary dark:bg-background"
+         onMouseEnter={() => setIsHovering(true)}
+         onMouseLeave={() => setIsHovering(false)}
+        >
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-center mb-8 sm:mb-12">
               Frequently Asked Questions

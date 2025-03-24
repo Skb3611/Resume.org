@@ -116,6 +116,7 @@ export function UserInfoModal({ trigger }: { trigger?: React.ReactNode }) {
       }
       if (user) {
         if (user.accountType == userInfo.plan) {
+          console.log(user.accountType,userInfo.plan)
           toast.error("You are already a member of this plan", {
             description: "Select another plan",
           });
@@ -138,6 +139,15 @@ export function UserInfoModal({ trigger }: { trigger?: React.ReactNode }) {
         let checkoutOptions = {
           paymentSessionId: order?.payment_session_id,
           redirectTarget: "_modal",
+          theme:{
+            backgroundColor:"#e11d48",
+            branding:{
+              logo:"https://resume-org.vercel.app/favicon.ico",
+              name:"Resume-org"
+            },
+            buttonText:"Pay to Resume-org"
+          },
+          order_note:"Payment for Resume-org"
         };
         cashfree.checkout(checkoutOptions).then(async (result: any) => {
           if (result.error) {

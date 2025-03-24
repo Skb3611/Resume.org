@@ -20,6 +20,7 @@ export const initializePayment = async (userInfo: UserInfo) => {
             customer_name: userInfo.name,
             customer_phone: userInfo.phone,
         },
+        
         order_meta: {
             return_url: process.env.NEXT_PUBLIC_URL,
             // notify_url: "https://example.com/notify",

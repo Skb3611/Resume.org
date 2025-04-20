@@ -505,14 +505,15 @@ export default function ResumeBuilder() {
                   alt="logo"
                   width={25}
                   height={25}
-                  className="dark:invert"
+                  className="dark:invert h-4 w-4 sm:h-auto sm:w-auto"
+                  
                 />
               </motion.span>
               <motion.span
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.6 }}
-                className=" text-lg md:text-2xl font-bold"
+                className=" text-xs sm:text-2xl font-bold"
               >
                 esume.org
               </motion.span>
@@ -521,17 +522,18 @@ export default function ResumeBuilder() {
           <div className="button flex items-center gap-2 justify-center">
             <Button
               variant="outline"
-              onClick={() => {
-                router.push("/");
-              }}
+              className="text-xs px-2 py-1 md:text-sm md:px-4 md:py-2"
+              onClick={() => router.push("/")}
             >
+              
               <ArrowLeft className="h-4 w-4" />
-              Return Home
+              <span className="hidden sm:inline">
+                Return Home</span>
+              <span className="sm:hidden">Home</span>
             </Button>
             <Button
-              onClick={() => {
-                router.push("/dashboard");
-              }}
+              className="text-xs px-2 py-1 md:text-sm md:px-4 md:py-2"
+              onClick={() => router.push("/dashboard")}
             >
               Dashboard
             </Button>

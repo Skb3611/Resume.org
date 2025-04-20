@@ -46,7 +46,7 @@ const features = [
 ];
 const FeaturesSection = () => {
   return (
-    <div className="container mx-auto px-4 md:px-6">
+    <div className="relative container mx-auto px-4 md:px-6">
       <div className="flex flex-col items-center justify-center lg:mb-16 mb-8 text-center">
         <motion.span
           initial={{ opacity: 0, width: 0 }}
@@ -101,10 +101,10 @@ const FeaturesSection = () => {
               key={index}
               variants={itemVariants}
               whileHover={{
-                scale: 1.05,
+                scale: 1.02,
                 transition: { duration: 0.3,ease:"easeInOut" },
               }}
-              className="flex flex-col items-start p-6 rounded-lg backdrop-blur-lg bg-foreground/5 shadow-sm shadow-foreground/25 hover:bg-foreground/20 duration-300  "
+              className="flex flex-col items-start p-6 rounded-lg backdrop-blur-lg bg-foreground/5 shadow-sm shadow-foreground/25 hover:bg-foreground/20 duration-75  "
             >
               <div className="flex items-center justify-center gap-5 mb-2 md:flex-col md:items-start md:gap-2 md:mb-0">
                 <motion.div
